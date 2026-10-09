@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#171915">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="GoLabour">
+  <meta name="description" content="GoLabour Solutions mobile end-of-shift timesheet. Calculate hours, get supervisor sign-off, calculate shift earnings and generate invoices.">
+  <title>GoLabour | Smart Timesheet</title>
+  <link rel="manifest" href="manifest.webmanifest?v=1.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png?v=1.2.0">
+  <link rel="icon" href="favicon.ico?v=1.2.0" sizes="16x16 32x32 48x48" type="image/x-icon">
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png?v=1.2.0">
+  <link rel="icon" type="image/svg+xml" sizes="any" href="favicon.svg?v=1.2.0">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="pwa.css">
+  <link rel="stylesheet" href="invoice.css">
+  <script src="app.js" defer></script>
+  <script src="invoice.js" defer></script>
+  <script src="pwa.js" defer></script>
+</head>
+<body>
+  <header class="masthead">
+    <div class="mast-inner">
+      <div class="brand" aria-label="GoLabour Solutions">
+        <img src="logo.png" alt="GoLabour Solutions" id="brandImage" onerror="this.style.display='none';document.getElementById('brandText').style.display='block'">
+        <span class="brand-fallback" id="brandText">go<span>Labour</span><small>SOLUTIONS</small></span>
+      </div>
+      <div class="app-header-actions"><span id="connectionPill" class="connection-pill">Online</span><button type="button" id="appHelp" class="app-help" aria-label="Install and app help">?</button></div>
+    </div>
+  </header>
+
+  <nav class="page-navigation" aria-label="GoLabour pages">
+    <div><button type="button" id="timesheetTab" aria-current="page" data-page="timesheet">Timesheet</button><button type="button" id="calculatorTab" data-page="calculator">Calculator</button><button type="button" id="invoiceTab" data-page="invoice">Invoice</button></div>
+  </nav>
+  <div id="appUpdate" class="app-update" hidden><span>A new app version is ready.</span><button type="button" id="applyUpdate">Update now</button></div>
+  <div class="hero" id="timesheetHero">
+    <div class="hero-inner">
+      <div class="mini-label">GO LABOUR SOLUTIONS <span>/</span> DAILY REPORT</div>
+      <h1>Shift completed.<br><em>Timesheet sorted.</em></h1>
+      <p>Fill in your hours at the end of your shift, get your supervisor to sign, then send it to your work WhatsApp group.</p>
+      <div class="steps"><span><b>01</b> Fill in</span><i aria-hidden="true"></i><span><b>02</b> Sign off</span><i aria-hidden="true"></i><span><b>03</b> Share</span></div>
+    </div>
+    <div class="hero-line"></div>
+  </div>
+  <main class="main-content app-layout" id="timesheetPage">
+    <button type="button" id="installGuide" class="install-card">
+      <img src="icons/icon-192.png?v=1.2.0" alt="" width="48" height="48">
+      <span><strong>Add GoLabour to your phone</strong><small>Open it straight from your Home Screen.</small></span>
+      <b aria-hidden="true">+</b>
+    </button>
+    <div class="section-title"><span>01 / WORKER DETAILS</span><span class="section-aside">End of shift · Complete once</span></div>
+    <form id="timesheetForm" novalidate autocomplete="off">
+      <section class="surface worker-section" aria-labelledby="workerHeading">
+        <div class="section-heading">
+          <div class="section-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="7.5" r="3.8"/><path d="M4.5 21v-1.8A7.5 7.5 0 0 1 12 11.7a7.5 7.5 0 0 1 7.5 7.5V21"/></svg></div>
+          <div><h2 id="workerHeading">Your shift</h2><p>Record your actual hours worked.</p></div>
+        </div>
+        <div class="form-grid">
+          <div class="field span2">
+            <div class="worker-label-row">
+              <label for="workerName">Worker full name <b>*</b></label>
+            </div>
+            <input id="workerName" name="workerName" maxlength="100" autocomplete="off" required>
+            <div id="extraWorkers" class="extra-workers" aria-live="polite"></div>
+            <button type="button" class="add-worker-button" id="addWorker"><span aria-hidden="true">+</span> Add another worker</button>
+            <p class="field-hint worker-hint">One timesheet and one supervisor signature for workers with the same site, date, start, break and finish times. If hours differ, use separate timesheets.</p>
+          </div>
+          <div class="field span2"><label for="location">Job site / location <b>*</b></label><input id="location" name="location" maxlength="110" autocomplete="off" required></div>
+          <div class="field span2"><label for="shiftDate">Shift date <b>*</b></label><input id="shiftDate" name="shiftDate" type="date" required></div>
+        </div>
+        <div class="light-divider"></div>
+        <div class="section-subtitle">Working hours</div>
+        <div class="time-grid">
+          <div class="field"><label for="startTime">Start time <b>*</b></label><input id="startTime" name="startTime" type="time" required autocomplete="off"></div>
+          <div class="field"><label for="breakMinutes">Break <b>*</b></label>
+            <div class="break-wrapper"><input id="breakMinutes" name="breakMinutes" type="number" min="0" max="1439" step="1" inputmode="numeric" aria-describedby="breakHelp"><span>minutes</span></div>
+            <p class="field-hint" id="breakHelp">Enter break minutes (0 if none).</p>
+          </div>
+          <div class="field"><label for="finishTime">Finish time <b>*</b></label><input id="finishTime" name="finishTime" type="time" required autocomplete="off"></div>
+        </div>
+        <div class="totals-box" aria-live="polite"><div><span class="total-eyebrow">TOTAL PAID HOURS</span><strong id="hoursPretty">—</strong><small id="hoursDecimal">Awaiting shift times</small></div><div class="total-symbol" aria-hidden="true">↗</div></div>
+        <p class="calc-help" id="calcHelp">Hours are calculated from start to finish, minus the break. Overnight shifts are supported.</p>
+      </section>
+
+      <div class="section-title"><span>02 / NOTES</span><span class="section-aside">Optional</span></div>
+      <section class="surface notes-section"><label for="message">Message / comments</label><textarea id="message" name="message" maxlength="650" rows="3"></textarea><div class="notes-foot"><span>Include anything your supervisor or office should know.</span><span id="charCount">0 / 650</span></div></section>
+
+      <div class="section-title"><span>03 / SUPERVISOR APPROVAL</span><span class="section-aside">Sign on screen</span></div>
+      <section class="surface supervisor-section">
+        <div class="section-heading"><div class="section-icon icon-gold"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 17 4 4 13-13-4-4L3 17zm11-11 4 4M3 17l-.7 4.7L7 21"/></svg></div><div><h2>Supervisor sign-off</h2><p>Ask your supervisor to review the hours and sign below.</p></div></div>
+        <div class="supervisor-fields">
+          <div class="field"><label for="supervisorName">Supervisor full name <b>*</b></label><input id="supervisorName" name="supervisorName" maxlength="100" required autocomplete="off"></div>
+          <div class="field"><label for="companyName">Company name:</label><input id="companyName" name="companyName" maxlength="110" autocomplete="off"></div>
+        </div>
+        <div class="signature-label"><label for="signaturePad">Supervisor signature <b>*</b></label><button class="clear-signature" type="button" id="clearSignature">Clear signature ↺</button></div>
+        <div class="pad-wrap"><canvas id="signaturePad" class="signature-pad" role="img" aria-label="Signature area. Draw with your finger, stylus or mouse."></canvas><span class="signature-placeholder" id="signatureHint" aria-hidden="true"></span></div>
+        <p class="signature-disclaimer">By signing, the supervisor confirms they have reviewed the timesheet details shown above.</p>
+      </section>
+
+      <section class="ready-panel">
+        <div class="ready-heading"><div class="ready-number">04</div><div><h2>Ready to send?</h2><p>Generate a signed timesheet and share it with your WhatsApp group.</p></div></div>
+        <div class="action-grid">
+          <button type="button" class="btn btn-primary" id="shareButton"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="5" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8 11 7-5M8 13l7 5"/></svg> Share to WhatsApp <span aria-hidden="true">↗</span></button>
+          <button type="button" class="btn btn-outline" id="downloadButton"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M4 16v4h16v-4"/></svg> Save signed photo</button>
+          <button type="button" class="btn btn-quiet" id="printButton">Print / Save as PDF</button>
+        </div>
+        <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
+        <p class="share-tip"><strong>WhatsApp tip:</strong> On supported phones, tap Share and choose WhatsApp, then select your work group. If sharing is unavailable, download the image and attach it to the group manually. The website cannot automatically post into a private group. Important: Send your completed, signed timesheet together with your invoice.</p>
+        <button type="button" class="reset-button" id="resetButton">Start a new timesheet</button>
+      </section>
+    </form>
+    <details id="previousReports" class="previous-reports" hidden>
+      <summary>Previous copies on this phone <span id="previousCount"></span></summary>
+      <p>Open an existing copy to download or share it.</p>
+      <div id="previousList" class="previous-list"></div>
+    </details>
+    <footer class="footer"><span>GoLabour Solutions · Smart Timesheet</span><a href="https://golabour.com.au/" target="_blank" rel="noopener noreferrer">golabour.com.au ↗</a></footer>
+  </main>
+
+  <div class="hero" id="calculatorHero" hidden><div class="hero-inner"><div class="mini-label">GO LABOUR SOLUTIONS <span>/</span> SHIFT CALCULATOR</div><h1>Check your hours.<br><em>Know your amount.</em></h1><p>Calculate earnings across any number of shifts. Hours and rates stay here, separate from your invoice.</p></div><div class="hero-line"></div></div>
+  <main class="main-content app-layout invoice-page" id="calculatorPage" hidden>
+    <div class="section-title"><span>YOUR SHIFTS</span><span class="section-aside">Any day · Multiple shifts</span></div>
+      <section class="surface shifts-surface">
+        <div class="section-heading"><div><h2>Add each shift</h2><p>Different jobs, days and rates can all go in one calculation.</p></div></div>
+        <p class="paid-hours-note"><strong>Breaks are unpaid.</strong> Enter paid hours after deducting breaks. For 8 hours 30 minutes, enter <strong>8.5</strong>.</p>
+        <div id="invoiceShifts" class="invoice-shifts"></div>
+        <button type="button" class="add-worker-button" id="addInvoiceShift"><span aria-hidden="true">+</span> Add another shift</button>
+        <div class="totals-box invoice-total" aria-live="polite"><div><span class="total-eyebrow">CALCULATED TOTAL · AUD</span><strong id="invoiceTotal">$0.00</strong><small id="invoiceShiftCount">Add your first shift</small></div><div class="total-symbol" aria-hidden="true">$</div></div>
+        <p class="calc-help">Hours and rates stay in the calculator. The invoice shows each job name, date and amount.</p>
+      </section>
+
+
+    <section class="ready-panel invoice-actions"><div class="ready-heading"><div><h2>Keep your calculation</h2><p>Save it for later, or copy the job amounts into the invoice page.</p></div></div>
+      <button type="button" id="saveInvoiceCalculation" class="btn btn-primary">Save calculation on this phone</button>
+      <button type="button" id="saveCalculationPhoto" class="btn btn-outline">Save calculator photo</button>
+      <button type="button" id="createInvoiceFromCalc" class="btn btn-primary">Create invoice using these amounts ↗</button>
+      <div class="feedback" id="calculatorFeedback" role="status" aria-live="polite"></div>
+      <p class="share-tip">Save before closing; changes aren’t saved automatically. Calculations stay on this phone. The calculator photo is for your own reference.</p>
+      <button type="button" id="newInvoiceCalculation" class="reset-button">Start a new calculation</button>
+    </section>
+    <details id="savedInvoiceCalculations" class="previous-reports" hidden><summary>Saved calculations on this phone <span id="savedInvoiceCount"></span></summary><p>Reopen to edit, generate an invoice or correct a returned invoice.</p><div id="savedInvoiceList" class="previous-list"></div></details>
+    <footer class="footer"><span>GoLabour Solutions · Shift Calculator</span><span>Amounts in Australian dollars</span></footer>
+  </main>
+  <div class="hero" id="invoiceHero" hidden><div class="hero-inner"><div class="mini-label">GO LABOUR SOLUTIONS <span>/</span> INVOICE</div><h1>Your jobs.<br><em>Your invoice.</em></h1><p>Enter each job’s date and amount, then save your invoice or email it to GoLabour.</p></div><div class="hero-line"></div></div>
+  <main class="main-content app-layout invoice-page" id="invoicePage" hidden>
+    <details class="invoice-deadlines payment-instructions" open><summary>GoLabour invoice &amp; payment instructions</summary>
+      <p><strong>Email your invoice to <a href="mailto:invoice@golabour.com.au">invoice@golabour.com.au</a>.</strong></p>
+      <p><strong>Payments are processed every Wednesday</strong> for invoices received by Sunday.</p>
+      <ul><li>Include your <strong>name, ABN and bank account</strong>.</li><li>Include <strong>job name, job date and total amount</strong>.</li><li><strong>Breaks are unpaid.</strong></li><li><strong>A timesheet is not an invoice.</strong></li></ul>
+      <p><strong>**Submit no later than Sunday, 11:59 pm. Invoices sent after Sunday will be paid in the next payment cycle.</strong></p>
+      <p><strong>**Returned for correction? Resubmit the corrected invoice no later than Tuesday, 11:59 pm to be paid on Thursday</strong>.</p>
+      </details>
+    <form id="invoiceForm" novalidate>
+      <div class="section-title"><span>01 / YOUR DETAILS</span><span class="section-aside">Saved only on this phone</span></div>
+      <section class="surface">
+        <div class="section-heading"><div class="section-icon icon-gold" aria-hidden="true">↗</div><div><h2>Your invoice details</h2><p>Your name, ABN and bank account appear on the invoice.</p></div></div>
+        <div class="form-grid">
+          <div class="field span2"><label for="invoiceWorker">Worker full name <b>*</b></label><input id="invoiceWorker" maxlength="100" autocomplete="name" required></div>
+          <div class="field span2"><label for="invoiceABN">Your ABN <b>*</b></label><input id="invoiceABN" maxlength="20" inputmode="numeric" placeholder="11-digit ABN" required></div>
+          <div class="field span2"><label for="invoiceAccountName">Bank account name <b>*</b></label><input id="invoiceAccountName" maxlength="100" autocomplete="off" required></div>
+          <div class="field"><label for="invoiceBSB">BSB <b>*</b></label><input id="invoiceBSB" maxlength="7" inputmode="numeric" placeholder="000-000" autocomplete="off" required></div>
+          <div class="field"><label for="invoiceAccount">Account number <b>*</b></label><input id="invoiceAccount" maxlength="12" inputmode="numeric" autocomplete="off" required></div>
+          <div class="field span2"><label for="invoiceDate">Invoice date <b>*</b></label><input id="invoiceDate" type="date" required></div>
+        </div>
+        <button type="button" id="saveInvoiceDetails" class="invoice-secondary">Save my details on this phone</button>
+        <div class="bill-to"><span class="invoice-eyebrow">BILL TO</span><strong>GoLabour Solutions</strong><span>ABN: 82 676 721 136</span><span>invoice@golabour.com.au</span></div>
+      </section>
+
+
+      <div class="section-title"><span>02 / JOB AMOUNTS</span><span class="section-aside">No hours or rates</span></div>
+      <section class="surface"><div class="section-heading"><div><h2>Jobs on this invoice</h2><p>Enter amounts directly, or copy them from your calculator.</p></div></div>
+        <button type="button" id="importCalculatorAmounts" class="invoice-secondary">Use calculator amounts</button>
+        <div id="invoiceItems" class="invoice-shifts"></div>
+        <button type="button" id="addInvoiceItem" class="add-worker-button"><span aria-hidden="true">+</span> Add another job</button>
+        <div class="totals-box" aria-live="polite"><div><span class="total-eyebrow">TOTAL TO BE PAID · AUD</span><strong id="invoiceAmountTotal">$0.00</strong><small id="invoiceItemCount">Add your first job</small></div></div>
+      </section>
+      <section class="ready-panel invoice-actions"><div class="ready-heading"><div><h2>Save or send your invoice</h2><p>Check your details and job amounts before exporting.</p></div></div>
+        <div class="action-grid"><button type="button" id="saveInvoicePhoto" class="btn btn-primary">Save invoice photo</button><button type="button" id="saveInvoicePDF" class="btn btn-outline">Save invoice PDF</button><button type="button" id="emailInvoice" class="btn btn-quiet">Email invoice to GoLabour ↗</button></div>
+        <div class="feedback" id="invoiceFeedback" role="status" aria-live="polite"></div>
+        <p class="share-tip">Attach your signed timesheets as required. The payment instructions above are not printed on your invoice.</p>
+      </section>
+    </form>
+    <button type="button" data-page="calculator" class="invoice-back">← Back to calculator</button>
+    <footer class="footer"><span>GoLabour Solutions · Invoice</span><span>Amounts in Australian dollars</span></footer>
+  </main>
+  <dialog id="invoicePhotoDialog" class="app-dialog invoice-photo-dialog" aria-labelledby="invoicePhotoHeading">
+    <div class="dialog-heading"><h2 id="invoicePhotoHeading">Your invoice photo</h2><button type="button" id="closeInvoicePhoto" aria-label="Close photo preview">×</button></div>
+    <p id="invoicePhotoInstructions">On iPhone, touch and hold the image and choose Save to Photos, or open the share menu below.</p>
+    <div id="invoicePhotoPages" class="invoice-photo-pages"></div>
+    <button type="button" id="shareInvoicePhotos" class="btn btn-primary">Save to Photos / Share</button>
+    <div id="invoicePhotoStatus" class="invoice-dialog-status" role="status"></div>
+  </dialog>
+  <dialog id="invoiceEmailDialog" class="app-dialog" aria-labelledby="invoiceEmailHeading">
+    <div class="dialog-heading"><h2 id="invoiceEmailHeading">Email your invoice</h2><button type="button" id="closeInvoiceEmail" aria-label="Close email options">×</button></div>
+    <div class="email-recipient"><small>SEND TO</small><strong>invoice@golabour.com.au</strong><button type="button" id="copyInvoiceEmail" class="invoice-secondary">Copy email address</button></div>
+    <p><strong>Save the PDF, then open the email.</strong> The recipient, subject and message will be filled in. Attach your saved invoice before sending.</p>
+    <button type="button" id="emailDownloadPDF" class="btn btn-outline">1. Save invoice PDF</button>
+    <a id="openInvoiceEmail" class="btn btn-primary" href="mailto:invoice@golabour.com.au">2. Open email to GoLabour</a>
+    <button type="button" id="shareInvoicePDF" class="btn btn-quiet" hidden>Share PDF through your phone</button>
+    <p id="emailShareTip" hidden>If you use the share menu, choose your email app and enter invoice@golabour.com.au as the recipient. Include your signed timesheets as required.</p>
+    <div id="invoiceEmailStatus" class="invoice-dialog-status" role="status"></div>
+  </dialog>
+<div id="appToast" class="app-toast" role="status" aria-live="polite" hidden></div>
+  <dialog id="helpDialog" class="app-dialog" aria-labelledby="helpHeading">
+    <div class="dialog-heading"><h2 id="helpHeading">GoLabour on your phone</h2><button type="button" id="closeHelp" aria-label="Close app help">×</button></div>
+    <img class="help-app-icon" src="icons/icon-192.png?v=1.2.0" alt="GoLabour app icon" width="64" height="64">
+    <h3>On iPhone</h3>
+    <ol><li>Open this link in <strong>Safari</strong>.</li><li>Tap the page menu or <strong>Share</strong> button.</li><li>Choose <strong>Add to Home Screen</strong>.</li><li>Turn on <strong>Open as Web App</strong> if shown, then tap <strong>Add</strong>.</li></ol>
+    <h3>On Android</h3>
+    <p>Open the link in Chrome. Choose <strong>Add to Home screen</strong> or <strong>Install app</strong> from the browser menu.</p>
+    <p id="offlineStatus" role="status">Open the app online once to prepare offline access.</p>
+    <p>You can fill in and sign timesheets, calculate shifts and export invoice photos/PDFs offline after the app is ready. Sending through WhatsApp or email needs an internet connection.</p>
+    <p>Save the signed timesheet photo or PDF before closing the page. Each fresh visit starts a new timesheet. Invoice calculations can be saved separately on this phone and reopened later.</p>
+    <p class="help-version">Smart Timesheet · Version 1.2.0</p>
+    <button type="button" id="doneHelp" class="btn btn-primary">Got it</button>
+  </dialog>
+  <noscript><p class="no-script">Please enable JavaScript to use the GoLabour timesheet app.</p></noscript>
+
+  <section id="printSheet" class="print-sheet" aria-label="Printable signed timesheet">
+    <div class="print-brand"><strong>go<span>Labour</span> <small>SOLUTIONS</small></strong><span>END-OF-SHIFT TIMESHEET</span></div>
+    <div class="print-top"><h2>Daily timesheet</h2><p>Worker-submitted · Supervisor reviewed</p></div>
+    <div class="print-fields"><div><small id="pWorkerLabel">WORKER</small><div class="print-worker-list" id="pWorker"></div></div><div><small>DATE</small><strong id="pDate"></strong></div><div class="print-span"><small>JOB SITE / LOCATION</small><strong id="pLocation"></strong></div></div>
+    <div class="print-hours"><div><small>START</small><strong id="pStart"></strong></div><div><small>BREAK</small><strong id="pBreak"></strong></div><div><small>FINISH</small><strong id="pFinish"></strong></div><div><small>PAID HOURS</small><strong id="pHours"></strong></div></div>
+    <div class="print-message"><small>MESSAGE / COMMENTS</small><p id="pMessage"></p></div>
+    <div class="print-signature"><small>SUPERVISOR APPROVAL</small><div class="print-approval-fields"><p>Supervisor name: <strong id="pSupervisor"></strong></p><p>Company name: <strong id="pCompany"></strong></p></div><img id="pSignature" alt="Supervisor signature"><div>Signature</div></div>
+    <p class="print-disclaimer">Signed digitally on the worker's device. Hours and signature have not been independently verified by this website.</p>
+  </section>
+</body>
+</html>

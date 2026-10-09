@@ -1,0 +1,72 @@
+[hidden] { display: none !important; }
+body { min-height: 100vh; min-height: 100dvh; padding-bottom: env(safe-area-inset-bottom); }
+.masthead { padding-top: env(safe-area-inset-top); position: sticky; top: 0; z-index: 10; }
+.mast-inner { max-width: 850px; min-height: 76px; padding: 14px 22px; gap: 12px; }
+.brand { min-width: 0; }
+.brand img { width: 190px; }
+.app-header-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.connection-pill { font-size: 11px; font-weight: 750; color: #c6d6c3; border: 1px solid #475347; padding: 5px 8px; border-radius: 20px; white-space: nowrap; }
+.connection-pill.offline { color: #e5cfaa; border-color: #867052; }
+.app-help { border: 1px solid #7d7668; color: #e5ddcf; background: transparent; border-radius: 50%; width: 34px; height: 34px; font-weight: 700; font-size: 16px; flex-shrink: 0; }
+.hero-inner { padding-top: 38px; padding-bottom: 32px; }
+.hero p { font-size: 14px; }
+.main-content { padding-top: 22px; }
+.section-aside { font-size: 11px; }
+.field label, .signature-label label { font-size: 14px; }
+.field input, .notes-section textarea { font-size: 16px; }
+.field input, .notes-section textarea, .signature-pad, #workerHeading { scroll-margin-top: 110px; }
+.section-heading p, .ready-heading p { font-size: 13px; }
+.field-hint, .calc-help, .signature-disclaimer, .share-tip, .notes-foot { font-size: 12px; }
+.btn { font-size: 14px; min-height: 52px; }
+.total-eyebrow { font-size: 11px; }
+.clear-signature { font-size: 12px; min-height: 40px; }
+.feedback { font-size: 14px; }
+.install-card { display: flex; align-items: center; gap: 14px; width: 100%; border: 1px solid #d8cbb5; border-radius: 14px; padding: 15px 17px; background: #eee6d8; color: #393d33; text-align: left; }
+.install-card img { width: 48px; height: 48px; border-radius: 10px; flex-shrink: 0; }
+.install-card span { flex: 1; min-width: 0; }
+.install-card strong { display: block; font-size: 14px; line-height: 1.4; }
+.install-card small { display: block; font-size: 12px; line-height: 1.5; color: #7b786b; margin-top: 3px; }
+.install-card b { font-size: 24px; font-weight: 400; color: #786a52; flex-shrink: 0; }
+.app-update { background: #e9dbc5; color: #453a2a; padding: 12px 18px; font-size: 13px; display: flex; justify-content: center; align-items: center; gap: 14px; flex-wrap: wrap; }
+.app-update button { border: 1px solid #927b5b; border-radius: 8px; background: #fff9ee; color: #453a2a; padding: 8px 12px; font-size: 13px; font-weight: 750; }
+.app-dialog { border: 1px solid #d4c2a6; border-radius: 20px; background: #fffefa; color: #252923; padding: 24px; width: min(92vw, 450px); max-height: 88dvh; overflow: auto; box-shadow: 0 20px 90px #0006; }
+.app-dialog::backdrop { background: #151b15b8; backdrop-filter: blur(4px); }
+.dialog-heading { display: flex; align-items: flex-start; gap: 10px; justify-content: space-between; }
+.dialog-heading h2 { font-size: 23px; letter-spacing: -.05em; line-height: 1.15; margin: 0 0 18px; }
+.dialog-heading button { border: 0; border-radius: 9px; min-height: 40px; min-width: 40px; font-size: 25px; background: #ece3d4; color: #55452d; }
+.help-app-icon { border-radius: 14px; display: block; margin-bottom: 20px; }
+.app-dialog h3 { font-size: 15px; margin: 18px 0 8px; }
+.app-dialog ol { padding-left: 23px; line-height: 1.65; font-size: 15px; }
+.app-dialog li { margin: 12px 0; }
+.app-dialog p { font-size: 13px; line-height: 1.65; color: #76796d; }
+.app-dialog .help-version { font-size: 11px; color: #a19887; }
+.app-dialog > .btn { width: 100%; margin-top: 18px; }
+.previous-reports { margin-top: 24px; padding: 14px 16px; border: 1px solid #ddd3c4; border-radius: 12px; background: #faf6ee; }
+.previous-reports summary { cursor: pointer; font-size: 13px; font-weight: 750; color: #645a49; }
+.previous-reports > p { font-size: 12px; color: #81796b; margin: 12px 0; }
+.previous-list { display: grid; gap: 10px; }
+.previous-copy { display: flex; align-items: center; justify-content: space-between; gap: 12px; border-top: 1px solid #e3d9ca; padding-top: 12px; }
+.previous-copy div { min-width: 0; }
+.previous-copy strong { display: block; font-size: 13px; overflow-wrap: anywhere; }
+.previous-copy small { display: block; font-size: 12px; color: #81796b; overflow-wrap: anywhere; margin-top: 3px; }
+.previous-copy button { border: 1px solid #cbb89d; border-radius: 8px; background: #fffefa; color: #5d4a33; min-height: 42px; padding: 8px 12px; font-size: 12px; font-weight: 750; flex-shrink: 0; }
+.no-script { max-width: 600px; margin: 20px auto; padding: 20px; background: #fff0d7; }
+@media (max-width: 600px) {
+  .mast-inner { padding: 12px 16px; min-height: 72px; }
+  .brand img { width: 160px; }
+  .hero-inner { padding: 30px 20px 26px; }
+  .main-content { padding-top: 18px; }
+  .install-card { gap: 11px; padding: 14px; }
+}
+@media (max-width: 365px) {
+  .brand img { width: 130px; }
+  .app-header-actions { gap: 6px; }
+  .connection-pill { font-size: 10px; padding: 5px 6px; }
+  .install-card strong { font-size: 13px; }
+  .install-card small { font-size: 11px; }
+}
+@media print {
+  body { padding: 0; }
+  .app-layout, .app-update, .app-dialog, .gl-photo-preview { display: none !important; }
+  .print-sheet { display: block !important; }
+}

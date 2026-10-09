@@ -1,0 +1,33 @@
+/* The calculator uses the same cream, beige and charcoal palette as the timesheet. */
+.page-navigation{background:#1c201a;border-bottom:1px solid #44463c}
+.page-navigation>div{max-width:850px;margin:auto;padding:10px 22px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.page-navigation button{min-height:44px;border:1px solid #57574a;border-radius:9px;background:transparent;color:#e0dccf;font-weight:750;font-size:14px;padding:9px 12px}
+.page-navigation button[aria-current="page"]{background:#ccbaa1;border-color:#ccbaa1;color:#252923}
+.invoice-page{font-size:16px}.invoice-page .section-heading h2{font-size:23px}.invoice-page .section-heading p{font-size:14px}
+.invoice-page .section-title span:first-child{font-size:12px}.invoice-page .section-aside{font-size:12px}
+.invoice-secondary{background:#eee6d8;color:#554734;border:1px solid #d0c0a9;border-radius:9px;min-height:44px;padding:10px 13px;font-weight:750;font-size:14px;margin-top:17px}
+.bill-to{margin-top:23px;padding:20px 22px;border-radius:12px;background:#252923;color:#ddd7ca;display:grid;gap:4px;font-size:14px;overflow-wrap:anywhere}
+.bill-to strong{font-size:21px;color:#fffefa}.invoice-eyebrow{color:#ccbda3;font-weight:800;letter-spacing:.15em;font-size:11px;margin-bottom:6px}
+.paid-hours-note{margin:0 0 22px;padding:13px 15px;border-radius:10px;background:#f3ece1;color:#625644;font-size:14px;line-height:1.65}
+.invoice-shifts{display:grid;gap:17px}.invoice-shift{border:1px solid #dcd1c1;border-radius:13px;padding:18px;background:#fffefa}
+.invoice-shift-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}.invoice-shift-heading h3{font-size:17px;margin:0;color:#343b30}
+.remove-invoice-shift{min-height:40px;border:1px solid #d8c9b9;background:#f8f1e7;color:#765247;border-radius:8px;padding:8px 11px;font-size:13px;font-weight:700}
+.invoice-shift .form-grid{row-gap:15px}.invoice-shift input{scroll-margin-top:100px;min-width:0}.invoice-shift .day-label{font-size:13px;margin:7px 2px 0;color:#7b6a53;min-height:20px}
+.shift-line-total{margin-top:17px;display:flex;justify-content:space-between;align-items:center;gap:12px;border-top:1px solid #e5ddd1;padding-top:14px;color:#7b705e;font-size:13px}
+.shift-line-total strong{color:#252923;font-size:23px;font-variant-numeric:tabular-nums}.invoice-total strong{font-size:clamp(27px,7.5vw,39px);overflow-wrap:anywhere}
+.invoice-total>div:first-child{min-width:0}.invoice-total .total-symbol{flex-shrink:0}.invoice-page input[aria-invalid="true"]{border-color:#a3342d;box-shadow:0 0 0 2px #a3342d20}
+.invoice-actions>#saveInvoiceCalculation,.invoice-actions>#saveCalculationPhoto{width:100%;margin-top:10px}.invoice-actions .light-divider{border-color:#d4c8b6}
+.invoice-deadlines{margin-top:23px;padding:19px 21px;border:1px solid #d8c9b5;border-left:4px solid #a68b67;border-radius:12px;background:#eee6d8;color:#564d40;font-size:14px}
+.invoice-deadlines>strong{display:block;font-size:17px;color:#363c30}.invoice-deadlines p{margin:11px 0}.invoice-deadlines small{font-size:12px;color:#7b705f}
+.invoice-back{border:0;background:transparent;color:#66543b;font-size:14px;font-weight:750;min-height:46px;padding:12px 0;margin-top:18px}
+.saved-invoice-row .saved-invoice-actions{display:flex;gap:7px;flex-shrink:0}.saved-invoice-row .delete-calculation{color:#94594c;background:#faf0e9}
+.invoice-photo-dialog{width:min(94vw,620px)}.invoice-photo-pages{display:grid;gap:20px}.invoice-photo-pages img{width:100%;height:auto;display:block;border:1px solid #d7d0c6;background:white;border-radius:4px;-webkit-touch-callout:default}
+.invoice-photo-pages .photo-page-label{display:block;font-size:13px;font-weight:700;color:#726653;margin-bottom:8px}.invoice-photo-pages button{width:100%;margin:8px 0 0}
+.invoice-dialog-status{font-size:14px;line-height:1.6;color:#64573e;margin-top:14px;overflow-wrap:anywhere}
+#invoiceEmailDialog .btn{width:100%;margin-top:12px;text-decoration:none}.email-recipient{padding:15px;border:1px solid #d7c7b0;background:#f3ece1;border-radius:12px;overflow-wrap:anywhere}
+.email-recipient small{display:block;color:#87775e;font-size:11px;font-weight:800;letter-spacing:.12em}.email-recipient strong{display:block;margin-top:4px;font-size:17px}.email-recipient .invoice-secondary{margin-top:10px;background:#fffefa}
+.invoice-photo-dialog p,#invoiceEmailDialog p{font-size:14px}.invoice-photo-dialog .btn{font-size:14px}
+@media(max-width:600px){.page-navigation>div{padding:10px 12px}.invoice-shift{padding:16px 13px}.invoice-page .section-aside{font-size:11px}.invoice-page .section-title{align-items:start}.invoice-deadlines{padding:17px}.saved-invoice-row{align-items:flex-start;flex-wrap:wrap}.saved-invoice-actions{width:100%}.saved-invoice-actions button{flex:1}.invoice-page .totals-box{padding:19px 17px}}
+@media print{.page-navigation,#invoiceHero,#invoicePage,#timesheetHero{display:none!important}}
+
+.invoice-actions>#createInvoiceFromCalc{width:100%;margin-top:12px}.payment-instructions{margin-top:0}.payment-instructions summary{font-size:18px;font-weight:800;cursor:pointer}.payment-instructions a{color:#665036}.payment-instructions li{margin:9px 0}.payment-instructions ul{padding-left:23px}#invoiceItems{margin-top:20px}.invoice-job-amount{grid-column:1/-1}.page-navigation button{padding:9px 6px}@media(max-width:365px){.page-navigation button{font-size:12px}}
