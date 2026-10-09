@@ -49,7 +49,7 @@ this home-screen web app.
 - Optional draft saving on this device; **off by default** for shared phones.
 - Keep up to 20 signed copies in Saved, open/export them later, or remove them.
 - Offline use after the app shell has been cached during an online visit.
-- App icons, standalone display and safe-area spacing for iPhone screens.
+- Official GoLabour logo app icons, standalone display and safe-area spacing for iPhone screens.
 - Explicit update prompt when a newer app version is ready.
 
 ## Data and sharing
@@ -83,9 +83,23 @@ on-device check. Chromium emulation does not reproduce those native menus.
 ## Updating the app later
 
 When changing the published files, increase the version in `sw.js` (for example,
-`v1.0.0` to `v1.0.1`). This creates a complete new offline cache. The app offers an
+`v1.0.1` to `v1.0.2`). This creates a complete new offline cache. The app offers an
 Update button and preserves an enabled draft before reloading. Saved records
 and drafts use separate storage keys from the cached app files.
+
+### Logo icon update — version 1.0.1
+
+The app icons use the full official logo from the supplied `logo.png`, without
+redrawing or changing its lettering or colours. Only its transparent outer
+padding is cropped. A dark green background keeps the pale logo readable.
+The maskable icon keeps the logo inside the central safe area.
+
+Upload the complete updated `GoLabour` folder contents to the existing folder,
+including `icons`, `index.html`, `manifest.webmanifest` and `sw.js`. Open the app
+online and tap **Update now** when offered. An existing iPhone Home Screen icon
+may retain its old image; open the updated link in Safari and use **Add to Home
+Screen** again to pick up the new logo. Before removing an existing installed
+app or clearing its data, export any saved reports you need to keep.
 
 ## Main files
 

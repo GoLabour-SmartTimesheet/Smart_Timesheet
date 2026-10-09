@@ -9,9 +9,9 @@
   <meta name="apple-mobile-web-app-title" content="GoLabour">
   <meta name="description" content="GoLabour Solutions mobile end-of-shift timesheet. Calculate hours, get supervisor sign-off, and share with WhatsApp.">
   <title>GoLabour | Smart Timesheet</title>
-  <link rel="manifest" href="manifest.webmanifest">
-  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="manifest" href="manifest.webmanifest?v=1.0.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png?v=1.0.1">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=1.0.1">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="pwa.css">
   <script src="app.js" defer></script>
@@ -36,7 +36,7 @@
       <section class="home-primary"><div><span class="small-eyebrow">YOUR NEXT REPORT</span><h2>Ready when you are.</h2><p>One signed timesheet for your shift, including workers with the same hours.</p></div><button type="button" class="btn btn-primary home-start" id="homeStart">Start a timesheet <span aria-hidden="true">↗</span></button><button type="button" class="btn btn-outline" id="homeContinue" hidden>Continue current timesheet</button><p id="draftSummary" class="draft-summary">Your form starts fresh on this phone.</p></section>
       <div class="home-stats"><button type="button" id="homeSaved"><strong id="savedCount">0</strong><span>Saved timesheets</span><i aria-hidden="true">↗</i></button><div><span class="offline-dot" aria-hidden="true"></span><strong id="offlineTitle">Getting ready</strong><span id="offlineDescription">Preparing offline access</span></div></div>
       <section class="storage-card"><div><h2>Remember my draft</h2><p>Save changes on this phone as you work. Keep this off on a shared device.</p></div><label class="draft-switch"><input type="checkbox" id="rememberDraft" aria-label="Remember my draft on this phone"><span aria-hidden="true"></span></label><p id="storageNotice" class="storage-notice" role="status"></p></section>
-      <button type="button" id="installGuide" class="install-card"><img src="icons/icon-192.png" alt="" width="44" height="44"><span><strong>Add GoLabour to your iPhone</strong><small>Open it straight from your Home Screen.</small></span><b aria-hidden="true">+</b></button>
+      <button type="button" id="installGuide" class="install-card"><img src="icons/icon-192.png?v=1.0.1" alt="" width="44" height="44"><span><strong>Add GoLabour to your iPhone</strong><small>Open it straight from your Home Screen.</small></span><b aria-hidden="true">+</b></button>
       <div class="home-flow"><span>Fill in</span><i aria-hidden="true">→</i><span>Supervisor signs</span><i aria-hidden="true">→</i><span>Share</span></div>
       <footer class="footer"><span>GoLabour Solutions · Smart Timesheet</span><a href="https://golabour.com.au/" target="_blank" rel="noopener noreferrer">Company website ↗</a></footer>
     </div>
@@ -114,7 +114,7 @@
   </main>
   <nav class="app-nav" aria-label="App screens"><button type="button" data-screen="home" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7M5 9v12h14V9M9 21v-7h6v7"/></svg><span>Home</span></button><button type="button" data-screen="timesheet"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v17H5V4h2M9 3h6v4H9zM9 12h6M9 16h6"/></svg><span>Timesheet</span></button><button type="button" data-screen="saved"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v17H4zM8 4v6h8V4M8 21v-6h8v6"/></svg><span>Saved</span><b id="savedBadge" hidden>0</b></button></nav>
   <div id="appToast" class="app-toast" role="status" aria-live="polite" hidden></div>
-  <dialog id="helpDialog" class="app-dialog" aria-labelledby="helpHeading"><div class="dialog-heading"><h2 id="helpHeading">GoLabour on your iPhone</h2><button type="button" id="closeHelp" aria-label="Close app help">×</button></div><img class="help-app-icon" src="icons/icon-192.png" alt="GoLabour app icon" width="64" height="64"><ol><li>Open the timesheet link in <strong>Safari</strong>.</li><li>Tap the page menu or <strong>Share</strong> button.</li><li>Choose <strong>Add to Home Screen</strong>.</li><li>Turn on <strong>Open as Web App</strong> if shown, then tap <strong>Add</strong>.</li></ol><p>Open the app online once and wait for “Offline ready”. You can then fill in and sign a timesheet without a connection.</p><p>Sharing through WhatsApp needs an internet connection. Saved reports and optional drafts stay on this device.</p><p class="help-version">Smart Timesheet · Version 1.0</p><button type="button" id="doneHelp" class="btn btn-primary">Got it</button></dialog>
+  <dialog id="helpDialog" class="app-dialog" aria-labelledby="helpHeading"><div class="dialog-heading"><h2 id="helpHeading">GoLabour on your iPhone</h2><button type="button" id="closeHelp" aria-label="Close app help">×</button></div><img class="help-app-icon" src="icons/icon-192.png?v=1.0.1" alt="GoLabour app icon" width="64" height="64"><ol><li>Open the timesheet link in <strong>Safari</strong>.</li><li>Tap the page menu or <strong>Share</strong> button.</li><li>Choose <strong>Add to Home Screen</strong>.</li><li>Turn on <strong>Open as Web App</strong> if shown, then tap <strong>Add</strong>.</li></ol><p>Open the app online once and wait for “Offline ready”. You can then fill in and sign a timesheet without a connection.</p><p>Sharing through WhatsApp needs an internet connection. Saved reports and optional drafts stay on this device.</p><p class="help-version">Smart Timesheet · Version 1.0.1</p><button type="button" id="doneHelp" class="btn btn-primary">Got it</button></dialog>
   <noscript><p class="no-script">Please enable JavaScript to use the GoLabour timesheet app.</p></noscript>
 
   <section id="printSheet" class="print-sheet" aria-label="Printable signed timesheet">
