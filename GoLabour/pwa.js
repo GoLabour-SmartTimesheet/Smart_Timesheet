@@ -1,4 +1,4 @@
-/* Single-page GoLabour timesheet: installation, offline access and existing-copy recovery. */
+/* GoLabour app: installation, offline access and existing timesheet-copy recovery. */
 (() => {
   'use strict';
   const $ = id => document.getElementById(id);
@@ -27,7 +27,7 @@
     $('connectionPill').classList.toggle('offline',offline);
   }
   window.addEventListener('online',connectivity);window.addEventListener('offline',connectivity);connectivity();
-  function markReady() { offlineReady=true;$('offlineStatus').textContent='Offline ready. Fill in and sign even without a connection.';connectivity(); }
+  function markReady() { offlineReady=true;$('offlineStatus').textContent='Offline ready. Complete timesheets, calculate shifts and export invoices without a connection.';connectivity(); }
   function offerUpdate(worker) { waitingWorker=worker;$('appUpdate').hidden=false; }
   if ('serviceWorker' in navigator && window.isSecureContext) {
     navigator.serviceWorker.register('./sw.js',{scope:'./',updateViaCache:'none'}).then(registration=>{
@@ -46,7 +46,8 @@
   }
   $('applyUpdate').addEventListener('click',()=>{
     if(!waitingWorker)return;
-    if(meaningful(api.captureState())&&!confirm('Update now? Save the signed photo or PDF first if you need to keep this current timesheet. The current form will be cleared.'))return;
+    const invoiceUnsaved=window.GoLabourInvoice?.hasUnsavedChanges();
+    if((meaningful(api.captureState())||invoiceUnsaved)&&!confirm('Update now? Save your current timesheet photo/PDF and any unsaved invoice calculation first. The current forms will be cleared. Saved calculations remain on this phone.'))return;
     updateRequested=true;waitingWorker.postMessage({type:'SKIP_WAITING'});
   });
 
