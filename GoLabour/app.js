@@ -12,6 +12,13 @@
   let nextWorkerId = 2;
   const extraWorkers = $('extraWorkers');
   const addWorkerButton = $('addWorker');
+  function notifyChange() { document.dispatchEvent(new CustomEvent('golabour:change')); }
+  function invalidateSignature() {
+    if (!strokes.some(s => s.length > 1)) return false;
+    strokes = []; currentStroke = null; drawSignature();
+    feedback('Timesheet details changed. Ask the supervisor to review and sign again.');
+    return true;
+  }
   function workerInputs() {
     return [$('workerName'), ...extraWorkers.querySelectorAll('input.extra-worker-input')];
   }
@@ -28,7 +35,7 @@
       button.setAttribute('aria-label', `Remove worker ${i + 2}`);
     });
   }
-  addWorkerButton.addEventListener('click', () => {
+  function addWorker({ focus = true, notify = true } = {}) {
     if (workerInputs().length >= MAX_WORKERS) return;
     const row = document.createElement('div');
     row.className = 'extra-worker-row';
@@ -45,15 +52,25 @@
     remove.className = 'remove-worker-button';
     remove.textContent = 'Remove';
     remove.addEventListener('click', () => {
-      row.remove(); refreshWorkerControls(); clearFeedback();
+      row.remove(); refreshWorkerControls();
+      if (!invalidateSignature()) clearFeedback();
+      notifyChange();
     });
-    input.addEventListener('input', clearFeedback);
+    input.addEventListener('input', () => {
+      if (!invalidateSignature()) clearFeedback();
+      notifyChange();
+    });
     row.append(input, remove);
     extraWorkers.appendChild(row);
     refreshWorkerControls();
-    input.focus();
-    addWorkerButton.scrollIntoView({ block: 'nearest', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
-  });
+    if (focus) {
+      input.focus();
+      addWorkerButton.scrollIntoView({ block: 'nearest', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
+    }
+    if (notify) { invalidateSignature(); notifyChange(); }
+    return input;
+  }
+  addWorkerButton.addEventListener('click', () => addWorker());
   refreshWorkerControls();
 
   function formatDate(iso) {
@@ -142,11 +159,12 @@
     currentStroke.push(point(event));
     currentStroke = null;
     drawSignature();
+    notifyChange();
   }
   pad.addEventListener('pointerup', finishDraw);
   pad.addEventListener('pointercancel', finishDraw);
-  pad.addEventListener('lostpointercapture', () => { currentStroke = null; drawSignature(); });
-  $('clearSignature').addEventListener('click', () => { strokes = []; currentStroke = null; drawSignature(); clearFeedback(); });
+  pad.addEventListener('lostpointercapture', () => { currentStroke = null; drawSignature(); notifyChange(); });
+  $('clearSignature').addEventListener('click', () => { strokes = []; currentStroke = null; drawSignature(); clearFeedback(); notifyChange(); });
   new ResizeObserver(() => drawSignature()).observe(pad);
 
   function getValidatedReport() {
@@ -448,26 +466,50 @@
     window.print();
     feedback('Print dialog opened. Choose “Save as PDF” to make a PDF copy for WhatsApp.');
   });
-  $('resetButton').addEventListener('click', () => {
-    if (!window.confirm('Clear the form and signature to start a new timesheet?')) return;
+  function resetForm({ notify = true } = {}) {
     $('timesheetForm').reset();
     extraWorkers.replaceChildren();
     refreshWorkerControls();
+    for (const id of ids) $(id).value = '';
+    const today = new Date();
+    $('shiftDate').value = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
     strokes = []; currentStroke = null; drawSignature();
     recalc(); $('charCount').textContent = '0 / 650'; clearFeedback();
+    if (notify) { document.dispatchEvent(new CustomEvent('golabour:reset')); notifyChange(); }
+  }
+  $('resetButton').addEventListener('click', () => {
+    if (!window.confirm('Clear the form and signature to start a new timesheet?')) return;
+    resetForm();
     window.scrollTo({top:0,behavior:'smooth'});
   });
   for (const id of ids) $(id).addEventListener('input', () => {
     if (['startTime','finishTime','breakMinutes'].includes(id)) recalc();
     if (id === 'message') $('charCount').textContent = `${$('message').value.length} / 650`;
-    clearFeedback();
+    if (!invalidateSignature()) clearFeedback();
+    notifyChange();
   });
-  // Every visit starts with an empty form; do not restore details left by another worker.
-  $('timesheetForm').reset();
-  extraWorkers.replaceChildren();
-  refreshWorkerControls();
-  for (const id of ids) $(id).value = '';
-  recalc();
-  $('charCount').textContent = `${$('message').value.length} / 650`;
-  drawSignature();
+  function captureState() {
+    return {
+      version: 1,
+      fields: Object.fromEntries(ids.map(id => [id, $(id).value])),
+      workers: workerInputs().map(input => input.value),
+      strokes: strokes.map(stroke => stroke.map(p => ({x:p.x,y:p.y})))
+    };
+  }
+  function restoreState(state) {
+    if (!state || state.version !== 1 || !state.fields || !Array.isArray(state.workers)) throw new Error('Unsupported timesheet data');
+    extraWorkers.replaceChildren();
+    const workers = state.workers.slice(0, MAX_WORKERS);
+    for (const id of ids) $(id).value = String(state.fields[id] ?? '').slice(0, $(id).maxLength > 0 ? $(id).maxLength : 110);
+    $('workerName').value = String(workers[0] ?? '').slice(0,100);
+    for (const name of workers.slice(1)) addWorker({focus:false,notify:false}).value = String(name ?? '').slice(0,100);
+    strokes = Array.isArray(state.strokes) ? state.strokes.slice(0,40).map(stroke => Array.isArray(stroke) ? stroke.slice(0,3000).filter(p => p && Number.isFinite(p.x) && Number.isFinite(p.y) && p.x>=0 && p.x<=1 && p.y>=0 && p.y<=1).map(p => ({x:p.x,y:p.y})) : []).filter(s => s.length>1) : [];
+    currentStroke = null;
+    refreshWorkerControls(); recalc();
+    $('charCount').textContent = `${$('message').value.length} / 650`;
+    drawSignature(); clearFeedback();
+  }
+  // Fresh visits remain blank unless draft recovery is enabled in the app.
+  resetForm({notify:false});
+  window.GoLabourTimesheet = { captureState, restoreState, resetForm, validate:getValidatedReport, refreshSignature:drawSignature, feedback, calculate:calc };
 })();
