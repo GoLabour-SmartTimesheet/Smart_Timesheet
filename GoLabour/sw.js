@@ -1,7 +1,7 @@
 'use strict';
 const BASE = new URL('./', self.location.href);
 const PREFIX = 'golabour-timesheet:' + BASE.pathname + ':';
-const CACHE = PREFIX + 'v1.1.0';
+const CACHE = PREFIX + 'v1.2.0';
 const SHELL = new URL('index.html', BASE).href;
 const FILES = ['index.html','style.css','app.js','pwa.css','pwa.js','invoice.css','invoice.js','manifest.webmanifest','logo.png','favicon.svg','favicon.ico','icons/favicon-32.png','icons/apple-touch-icon.png','icons/icon-192.png','icons/icon-512.png','icons/icon-maskable-512.png'];
 self.addEventListener('install', event => {

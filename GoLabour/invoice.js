@@ -9,7 +9,8 @@
   const rows = $('invoiceShifts');
   let serial = 0, openedId = null, dirty = false, currentPage = null, photoFiles = [], emailFile = null;
   let previewURLs = [];
-  const scrollPositions = {timesheet:0,invoice:0};
+  const scrollPositions = {timesheet:0,calculator:0,invoice:0};
+  const items = $('invoiceItems');
   const today = () => { const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
   const text = (value,max=120) => String(value ?? '').replace(/[\x00-\x1f\x7f]/g,' ').slice(0,max);
   function parseDate(value) {
@@ -36,17 +37,28 @@
     return '$'+(value/100n).toString().replace(/\B(?=(\d{3})+(?!\d))/g,',')+'.'+(value%100n).toString().padStart(2,'0');
   }
   function notify(message,error=false) {
-    $('invoiceFeedback').textContent=message;
-    $('invoiceFeedback').className='feedback show'+(error?' error':'');
+    for(const id of ['invoiceFeedback','calculatorFeedback']){$(id).textContent=message;$(id).className='feedback show'+(error?' error':'');}
   }
   function read(key,fallback) { try { const raw=localStorage.getItem(prefix+key);return raw===null?fallback:JSON.parse(raw); }catch(_){return fallback;} }
   function write(key,value) { try { localStorage.setItem(prefix+key,JSON.stringify(value));return true; }catch(_){notify('This browser could not save on this phone. Your form is still here; export a photo or PDF to keep a copy.',true);return false;} }
   function shiftValue(row) { return Object.fromEntries(['job','date','hours','rate'].map(key=>[key,row.querySelector('[data-field="'+key+'"]').value])); }
-  function capture() { return {version:1,details:Object.fromEntries(allIds.map(id=>[id,$(id).value])),shifts:[...rows.children].map(shiftValue)}; }
+  function capture() { return {version:2,details:Object.fromEntries(allIds.map(id=>[id,$(id).value])),shifts:[...rows.children].map(shiftValue),invoiceItems:[...items.children].map(itemValue)}; }
   function cleanState(state) {
-    if(state?.version!==1||!state.details||typeof state.details!=='object'||!Array.isArray(state.shifts))return null;
-    return {version:1,details:Object.fromEntries(allIds.map(id=>[id,text(state.details[id],$(id).maxLength>0?$(id).maxLength:10)])),shifts:state.shifts.filter(s=>s&&typeof s==='object').map(s=>({job:text(s.job,120),date:parseDate(String(s.date))?String(s.date):'',hours:text(s.hours,16),rate:text(s.rate,16)}))};
+    if(![1,2].includes(state?.version)||!state.details||typeof state.details!=='object'||!Array.isArray(state.shifts))return null;
+    const shifts=state.shifts.filter(s=>s&&typeof s==='object').map(s=>({job:text(s.job,120),date:parseDate(String(s.date))?String(s.date):'',hours:text(s.hours,16),rate:text(s.rate,16)}));
+    const source=state.version===1?shifts.map(s=>({job:s.job,date:s.date,amount:amount(s)===null?'':decimalAmount(amount(s))})):Array.isArray(state.invoiceItems)?state.invoiceItems:[];
+    return {version:2,details:Object.fromEntries(allIds.map(id=>[id,text(state.details[id],$(id).maxLength>0?$(id).maxLength:10)])),shifts,invoiceItems:source.filter(i=>i&&typeof i==='object').map(i=>({job:text(i.job,120),date:parseDate(String(i.date))?String(i.date):'',amount:text(i.amount,16)}))};
   }
+  function decimalAmount(cents){return (cents/100n).toString()+'.'+(cents%100n).toString().padStart(2,'0');}
+  function itemValue(row){return Object.fromEntries(['job','date','amount'].map(key=>[key,row.querySelector('[data-item="'+key+'"]').value]));}
+  function addItem(value={date:today()},focus=true){
+    const row=document.createElement('article');row.className='invoice-shift invoice-item';const id=++serial;
+    row.innerHTML=`<div class="invoice-shift-heading"><h3>Job</h3><button type="button" class="remove-invoice-shift">Remove</button></div><div class="form-grid"><div class="field span2"><label for="invoice-job-${id}">Job name / location <b>*</b></label><input id="invoice-job-${id}" data-item="job" maxlength="120" required></div><div class="field span2"><label for="invoice-job-date-${id}">Job date <b>*</b></label><input id="invoice-job-date-${id}" data-item="date" type="date" required></div><div class="field span2"><label for="invoice-job-amount-${id}">Job amount ($) <b>*</b></label><input id="invoice-job-amount-${id}" data-item="amount" inputmode="decimal" maxlength="16" placeholder="e.g. 340.00" required></div></div>`;
+    for(const key of ['job','date','amount'])row.querySelector('[data-item="'+key+'"]').value=value[key]??'';
+    row.querySelector('button').addEventListener('click',()=>{row.remove();dirty=true;recalculateInvoice();});
+    row.addEventListener('input',event=>{event.target.removeAttribute('aria-invalid');dirty=true;recalculateInvoice();});items.append(row);recalculateInvoice();if(focus){dirty=true;row.querySelector('input').focus();}return row;
+  }
+  function recalculateInvoice(){let total=0n,count=0;[...items.children].forEach((row,index)=>{row.querySelector('h3').textContent='Job '+(index+1);row.querySelector('button').setAttribute('aria-label','Remove job '+(index+1));const cents=scaled(itemValue(row).amount,2);if(cents!==null){total+=cents;count++;}});$('invoiceAmountTotal').textContent=money(total);$('invoiceItemCount').textContent=count+' job amount'+(count===1?'':'s')+' added';return total;}
   function addShift(value={date:today()},focus=true) {
     const row=document.createElement('article');row.className='invoice-shift';const id=++serial;
     row.innerHTML=`<div class="invoice-shift-heading"><h3>Shift</h3><button type="button" class="remove-invoice-shift">Remove</button></div>
@@ -94,9 +106,15 @@
     return Object.fromEntries(profileIds.map(id=>[id,$(id).value.trim()]));
   }
   function validated({calculator=false}={}) {
-    for(const input of $('invoiceForm').querySelectorAll('[aria-invalid]'))input.removeAttribute('aria-invalid');
+    for(const input of document.querySelectorAll('[aria-invalid]'))input.removeAttribute('aria-invalid');
+    if(!calculator){
+      if(!validateProfile())return null;
+      if(!parseDate($('invoiceDate').value))return bad($('invoiceDate'),'Choose a valid invoice date.');
+      if(!items.children.length){notify('Add at least one job to the invoice.',true);$('addInvoiceItem').focus();return null;}
+      for(const row of items.children){const item=itemValue(row);if(!item.job.trim())return bad(row.querySelector('[data-item="job"]'),'Enter each job name or location.');if(!parseDate(item.date))return bad(row.querySelector('[data-item="date"]'),'Choose each job date.');if(scaled(item.amount,2)===null)return bad(row.querySelector('[data-item="amount"]'),'Enter a job amount greater than zero, using up to two decimal places.');}
+      const snapshot=capture();snapshot.total=recalculateInvoice();snapshot.shifts=snapshot.invoiceItems;return snapshot;
+    }
     if(!calculator&&!validateProfile())return null;
-    if(!parseDate($('invoiceDate').value))return bad($('invoiceDate'),'Choose a valid invoice date.');
     if(!rows.children.length){notify('Add at least one shift.',true);$('addInvoiceShift').focus();return null;}
     for(const row of rows.children){
       const shift=shiftValue(row);
@@ -106,7 +124,7 @@
       if(scaled(shift.rate,2)===null)return bad(row.querySelector('[data-field="rate"]'),'Enter an hourly rate greater than zero, using up to two decimal places.');
       if(amount(shift)===null)return bad(row.querySelector('[data-field="rate"]'),'This shift amount is too large. Check the hours and rate.');
     }
-    const snapshot=capture();snapshot.total=recalculate();
+    const snapshot=capture();snapshot.details.invoiceDate=today();snapshot.total=recalculate();
     if(snapshot.total<=0n){notify('The invoice total must be greater than zero.',true);return null;}
     return snapshot;
   }
@@ -141,6 +159,7 @@
     const clean=cleanState(state);if(!clean)return;
     for(const id of allIds)$(id).value=clean.details[id];
     rows.replaceChildren();for(const shift of clean.shifts)addShift(shift,false);recalculate();
+    items.replaceChildren();for(const item of clean.invoiceItems)addItem(item,false);recalculateInvoice();
     for(const input of $('invoiceForm').querySelectorAll('[aria-invalid]'))input.removeAttribute('aria-invalid');
   }
   function saveCalculation() {
@@ -157,11 +176,18 @@
   $('saveInvoiceDetails').addEventListener('click',()=>{const profile=validateProfile();if(profile&&write('profile-v1',profile))notify('Your personal and bank details are saved on this phone.');});
   $('saveInvoiceCalculation').addEventListener('click',saveCalculation);
   $('addInvoiceShift').addEventListener('click',()=>addShift({date:rows.lastElementChild?shiftValue(rows.lastElementChild).date||today():today()}));
+  $('addInvoiceItem').addEventListener('click',()=>addItem({date:items.lastElementChild?itemValue(items.lastElementChild).date||today():today()}));
+  function transferCalculation(){
+    navigate('calculator');const snapshot=validated({calculator:true});if(!snapshot)return;
+    if([...items.children].some(row=>{const i=itemValue(row);return i.job.trim()||i.amount.trim();})&&!confirm('Replace the invoice job amounts with this calculation? Your calculator entries will stay unchanged.'))return;
+    items.replaceChildren();for(const shift of snapshot.shifts)addItem({job:shift.job,date:shift.date,amount:decimalAmount(amount(shift))},false);dirty=true;navigate('invoice');notify('Job names, dates and amounts copied. Hours and rates remain in the calculator.');
+  }
+  $('createInvoiceFromCalc').addEventListener('click',transferCalculation);$('importCalculatorAmounts').addEventListener('click',transferCalculation);
   for(const id of allIds)$(id).addEventListener('input',()=>{$(id).removeAttribute('aria-invalid');dirty=true;});
   $('invoiceForm').addEventListener('submit',event=>event.preventDefault());
   $('newInvoiceCalculation').addEventListener('click',()=>{
     if((dirty||openedId)&&!confirm('Start a new calculation? Save your current calculation first if you want to keep it.'))return;
-    rows.replaceChildren();addShift({date:today()},false);$('invoiceDate').value=today();openedId=null;dirty=false;notify('New calculation started. Your personal details are kept.');$('invoiceShifts').scrollIntoView({behavior:'smooth',block:'start'});
+    rows.replaceChildren();addShift({date:today()},false);openedId=null;dirty=false;notify('New calculation started. Your personal details are kept.');$('invoiceShifts').scrollIntoView({behavior:'smooth',block:'start'});
   });
 
   // Canvas pages keep identical information in the PNG and PDF, including Unicode names.
@@ -178,26 +204,26 @@
   function renderPages(snapshot,calculator=false) {
     const W=1240,H=1754,M=80, ink='#252923',muted='#796b57',gold='#ccbaa1';
     const measure=document.createElement('canvas').getContext('2d');
-    const workerLines=wrap(measure,snapshot.details.invoiceWorker.trim()||'Worker',500,'700 30px Arial');
-    const dividerY=Math.max(371,workerLines.length*34+291);
+    const workerLines=calculator?[]:wrap(measure,snapshot.details.invoiceWorker.trim()||'Worker',500,'700 30px Arial');
+    const dividerY=calculator?205:Math.max(371,workerLines.length*34+291);
     const tableY=dividerY+70,rowsY=tableY+56;
     const rowCapacity=1320-rowsY;
-    const itemData=snapshot.shifts.map(shift=>({shift,cents:amount(shift),lines:wrap(measure,shift.job,calculator?390:590,'600 27px Arial'),height:0}));
+    const itemData=snapshot.shifts.map(shift=>({shift,cents:calculator?amount(shift):scaled(shift.amount,2),lines:wrap(measure,shift.job,calculator?390:590,'600 27px Arial'),height:0}));
     for(const item of itemData)item.height=Math.max(calculator?102:86,item.lines.length*34+(calculator?44:24));
     const groups=[];let group=[],height=0;
     for(const item of itemData){if(group.length&&height+item.height>rowCapacity){groups.push(group);group=[];height=0;}group.push(item);height+=item.height;}if(group.length)groups.push(group);
     return groups.map((items,pageIndex)=>{
       const canvas=document.createElement('canvas');canvas.width=W;canvas.height=H;const ctx=canvas.getContext('2d');
       ctx.fillStyle='#fffefa';ctx.fillRect(0,0,W,H);ctx.fillStyle=ink;ctx.fillRect(0,0,W,167);
-      const logo=$('brandImage');if(logo.complete&&logo.naturalWidth)ctx.drawImage(logo,515,117,1530,355,M,47,300,70);
       function label(value,x,y){ctx.fillStyle=muted;ctx.font='700 20px Arial';ctx.textAlign='left';ctx.fillText(value,x,y);}
       function line(value,x,y,font='26px Arial',color=ink,align='left',maxWidth){ctx.font=font;ctx.fillStyle=color;ctx.textAlign=align;if(maxWidth)ctx.fillText(value,x,y,maxWidth);else ctx.fillText(value,x,y);}
-      line(calculator?'CALCULATION':'INVOICE',W-M,85,calculator?'700 43px Arial':'700 54px Arial','#fffefa','right');
+      line(calculator?'CALCULATION':'INVOICE',M,85,calculator?'700 43px Arial':'700 54px Arial','#fffefa','left');
       line('Date: '+dateText(snapshot.details.invoiceDate),W-M,125,'23px Arial',gold,'right');
-      label('FROM',M,219);
+      if(!calculator){label('FROM',M,219);
       workerLines.forEach((value,i)=>line(value,M,260+i*34,'700 30px Arial'));
       line('ABN: '+(snapshot.details.invoiceABN.trim()||'—'),M,workerLines.length>1?workerLines.length*34+276:308,'24px Arial');
       label('BILL TO',680,219);line(RECIPIENT.name,680,260,'700 30px Arial');line('ABN: '+RECIPIENT.abn,680,302,'24px Arial');line(RECIPIENT.email,680,338,'22px Arial',muted);
+      }
       ctx.fillStyle=gold;ctx.fillRect(M,dividerY,W-2*M,3);label(calculator?'SHIFT EARNINGS · AUD':'WORKS COMPLETED · AUD',M,dividerY+44);
       ctx.fillStyle='#eee6d8';ctx.fillRect(M,tableY,W-2*M,56);
       label(calculator?'JOB / DATE':'JOB NAME',M+15,tableY+36);
@@ -315,27 +341,25 @@
   });
 
   function showPage(page,restoreScroll=false) {
-    page=page==='invoice'?'invoice':'timesheet';
+    page=['invoice','calculator'].includes(page)?page:'timesheet';
     if(page===currentPage)return;
     if(currentPage)scrollPositions[currentPage]=window.scrollY;
     currentPage=page;
-    for(const name of ['timesheet','invoice']){
+    for(const name of ['timesheet','calculator','invoice']){
       $(name+'Page').hidden=name!==page;$(name+'Hero').hidden=name!==page;
       if(name===page)$(name+'Tab').setAttribute('aria-current','page');else $(name+'Tab').removeAttribute('aria-current');
     }
-    document.title=page==='invoice'?'GoLabour | Invoice Calculator':'GoLabour | Smart Timesheet';
+    document.title=page==='invoice'?'GoLabour | Invoice':page==='calculator'?'GoLabour | Calculator':'GoLabour | Smart Timesheet';
     if(page==='timesheet')requestAnimationFrame(()=>window.GoLabourTimesheet.refreshSignature());
     if(restoreScroll)window.scrollTo({top:scrollPositions[page],behavior:'instant'});
   }
-  for(const button of document.querySelectorAll('[data-page]'))button.addEventListener('click',()=>{
-    const page=button.dataset.page;if(page===currentPage)return;
-    history.pushState(null,'',location.pathname+location.search+(page==='invoice'?'#invoice':''));showPage(page,true);
-  });
-  const route=()=>showPage(location.hash==='#invoice'?'invoice':'timesheet',true);
+  function navigate(page){if(page===currentPage)return;history.pushState(null,'',location.pathname+location.search+(page==='timesheet'?'':'#'+page));showPage(page,true);}
+  for(const button of document.querySelectorAll('[data-page]'))button.addEventListener('click',()=>navigate(button.dataset.page));
+  const route=()=>showPage(location.hash.slice(1),true);
   window.addEventListener('popstate',route);window.addEventListener('hashchange',route);
   window.addEventListener('storage',event=>{if(event.key===prefix+'calculations-v1')renderSaved();});
   const remembered=read('profile-v1',{});
   if(remembered&&typeof remembered==='object')for(const id of profileIds)$(id).value=text(remembered[id],$(id).maxLength);
-  $('invoiceDate').value=today();addShift({date:today()},false);dirty=false;renderSaved();showPage(location.hash==='#invoice'?'invoice':'timesheet');
+  $('invoiceDate').value=today();addShift({date:today()},false);addItem({date:today()},false);dirty=false;renderSaved();showPage(location.hash.slice(1));
   window.GoLabourInvoice={hasUnsavedChanges:()=>dirty,captureState:capture,restoreState:state=>{restore(state);dirty=true;},calculate:recalculate};
 })();

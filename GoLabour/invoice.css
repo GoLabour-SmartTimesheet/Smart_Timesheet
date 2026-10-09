@@ -1,6 +1,6 @@
 /* The calculator uses the same cream, beige and charcoal palette as the timesheet. */
 .page-navigation{background:#1c201a;border-bottom:1px solid #44463c}
-.page-navigation>div{max-width:850px;margin:auto;padding:10px 22px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.page-navigation>div{max-width:850px;margin:auto;padding:10px 22px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .page-navigation button{min-height:44px;border:1px solid #57574a;border-radius:9px;background:transparent;color:#e0dccf;font-weight:750;font-size:14px;padding:9px 12px}
 .page-navigation button[aria-current="page"]{background:#ccbaa1;border-color:#ccbaa1;color:#252923}
 .invoice-page{font-size:16px}.invoice-page .section-heading h2{font-size:23px}.invoice-page .section-heading p{font-size:14px}
@@ -29,3 +29,5 @@
 .invoice-photo-dialog p,#invoiceEmailDialog p{font-size:14px}.invoice-photo-dialog .btn{font-size:14px}
 @media(max-width:600px){.page-navigation>div{padding:10px 12px}.invoice-shift{padding:16px 13px}.invoice-page .section-aside{font-size:11px}.invoice-page .section-title{align-items:start}.invoice-deadlines{padding:17px}.saved-invoice-row{align-items:flex-start;flex-wrap:wrap}.saved-invoice-actions{width:100%}.saved-invoice-actions button{flex:1}.invoice-page .totals-box{padding:19px 17px}}
 @media print{.page-navigation,#invoiceHero,#invoicePage,#timesheetHero{display:none!important}}
+
+.invoice-actions>#createInvoiceFromCalc{width:100%;margin-top:12px}.payment-instructions{margin-top:0}.payment-instructions summary{font-size:18px;font-weight:800;cursor:pointer}.payment-instructions a{color:#665036}.payment-instructions li{margin:9px 0}.payment-instructions ul{padding-left:23px}#invoiceItems{margin-top:20px}.invoice-job-amount{grid-column:1/-1}.page-navigation button{padding:9px 6px}@media(max-width:365px){.page-navigation button{font-size:12px}}

@@ -9,11 +9,11 @@
   <meta name="apple-mobile-web-app-title" content="GoLabour">
   <meta name="description" content="GoLabour Solutions mobile end-of-shift timesheet. Calculate hours, get supervisor sign-off, calculate shift earnings and generate invoices.">
   <title>GoLabour | Smart Timesheet</title>
-  <link rel="manifest" href="manifest.webmanifest?v=1.1.0">
-  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png?v=1.1.0">
-  <link rel="icon" href="favicon.ico?v=1.1.0" sizes="16x16 32x32 48x48" type="image/x-icon">
-  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png?v=1.1.0">
-  <link rel="icon" type="image/svg+xml" sizes="any" href="favicon.svg?v=1.1.0">
+  <link rel="manifest" href="manifest.webmanifest?v=1.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png?v=1.2.0">
+  <link rel="icon" href="favicon.ico?v=1.2.0" sizes="16x16 32x32 48x48" type="image/x-icon">
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png?v=1.2.0">
+  <link rel="icon" type="image/svg+xml" sizes="any" href="favicon.svg?v=1.2.0">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="pwa.css">
   <link rel="stylesheet" href="invoice.css">
@@ -33,7 +33,7 @@
   </header>
 
   <nav class="page-navigation" aria-label="GoLabour pages">
-    <div><button type="button" id="timesheetTab" aria-current="page" data-page="timesheet">Timesheet</button><button type="button" id="invoiceTab" data-page="invoice">Invoice calculator</button></div>
+    <div><button type="button" id="timesheetTab" aria-current="page" data-page="timesheet">Timesheet</button><button type="button" id="calculatorTab" data-page="calculator">Calculator</button><button type="button" id="invoiceTab" data-page="invoice">Invoice</button></div>
   </nav>
   <div id="appUpdate" class="app-update" hidden><span>A new app version is ready.</span><button type="button" id="applyUpdate">Update now</button></div>
   <div class="hero" id="timesheetHero">
@@ -47,7 +47,7 @@
   </div>
   <main class="main-content app-layout" id="timesheetPage">
     <button type="button" id="installGuide" class="install-card">
-      <img src="icons/icon-192.png?v=1.1.0" alt="" width="48" height="48">
+      <img src="icons/icon-192.png?v=1.2.0" alt="" width="48" height="48">
       <span><strong>Add GoLabour to your phone</strong><small>Open it straight from your Home Screen.</small></span>
       <b aria-hidden="true">+</b>
     </button>
@@ -120,16 +120,41 @@
     <footer class="footer"><span>GoLabour Solutions · Smart Timesheet</span><a href="https://golabour.com.au/" target="_blank" rel="noopener noreferrer">golabour.com.au ↗</a></footer>
   </main>
 
-  <div class="hero" id="invoiceHero" hidden>
-    <div class="hero-inner">
-      <div class="mini-label">GO LABOUR SOLUTIONS <span>/</span> INVOICE CALCULATOR</div>
-      <h1>Every shift.<br><em>One invoice.</em></h1>
-      <p>Add your jobs and rates. Check the total, then save your invoice or email it to GoLabour.</p>
-      <div class="steps"><span>Calculate</span><i aria-hidden="true"></i><span>Save</span><i aria-hidden="true"></i><span>Email</span></div>
-    </div>
-    <div class="hero-line"></div>
-  </div>
+  <div class="hero" id="calculatorHero" hidden><div class="hero-inner"><div class="mini-label">GO LABOUR SOLUTIONS <span>/</span> SHIFT CALCULATOR</div><h1>Check your hours.<br><em>Know your amount.</em></h1><p>Calculate earnings across any number of shifts. Hours and rates stay here, separate from your invoice.</p></div><div class="hero-line"></div></div>
+  <main class="main-content app-layout invoice-page" id="calculatorPage" hidden>
+    <div class="section-title"><span>YOUR SHIFTS</span><span class="section-aside">Any day · Multiple shifts</span></div>
+      <section class="surface shifts-surface">
+        <div class="section-heading"><div><h2>Add each shift</h2><p>Different jobs, days and rates can all go in one calculation.</p></div></div>
+        <p class="paid-hours-note"><strong>Breaks are unpaid.</strong> Enter paid hours after deducting breaks. For 8 hours 30 minutes, enter <strong>8.5</strong>.</p>
+        <div id="invoiceShifts" class="invoice-shifts"></div>
+        <button type="button" class="add-worker-button" id="addInvoiceShift"><span aria-hidden="true">+</span> Add another shift</button>
+        <div class="totals-box invoice-total" aria-live="polite"><div><span class="total-eyebrow">CALCULATED TOTAL · AUD</span><strong id="invoiceTotal">$0.00</strong><small id="invoiceShiftCount">Add your first shift</small></div><div class="total-symbol" aria-hidden="true">$</div></div>
+        <p class="calc-help">Hours and rates stay in the calculator. The invoice shows each job name, date and amount.</p>
+      </section>
+
+
+    <section class="ready-panel invoice-actions"><div class="ready-heading"><div><h2>Keep your calculation</h2><p>Save it for later, or copy the job amounts into the invoice page.</p></div></div>
+      <button type="button" id="saveInvoiceCalculation" class="btn btn-primary">Save calculation on this phone</button>
+      <button type="button" id="saveCalculationPhoto" class="btn btn-outline">Save calculator photo</button>
+      <button type="button" id="createInvoiceFromCalc" class="btn btn-primary">Create invoice using these amounts ↗</button>
+      <div class="feedback" id="calculatorFeedback" role="status" aria-live="polite"></div>
+      <p class="share-tip">Save before closing; changes aren’t saved automatically. Calculations stay on this phone. The calculator photo is for your own reference.</p>
+      <button type="button" id="newInvoiceCalculation" class="reset-button">Start a new calculation</button>
+    </section>
+    <details id="savedInvoiceCalculations" class="previous-reports" hidden><summary>Saved calculations on this phone <span id="savedInvoiceCount"></span></summary><p>Reopen to edit, generate an invoice or correct a returned invoice.</p><div id="savedInvoiceList" class="previous-list"></div></details>
+    <footer class="footer"><span>GoLabour Solutions · Shift Calculator</span><span>Amounts in Australian dollars</span></footer>
+  </main>
+  <div class="hero" id="invoiceHero" hidden><div class="hero-inner"><div class="mini-label">GO LABOUR SOLUTIONS <span>/</span> INVOICE</div><h1>Your jobs.<br><em>Your invoice.</em></h1><p>Enter each job’s date and amount, then save your invoice or email it to GoLabour.</p></div><div class="hero-line"></div></div>
   <main class="main-content app-layout invoice-page" id="invoicePage" hidden>
+    <details class="invoice-deadlines payment-instructions" open><summary>GoLabour invoice &amp; payment instructions</summary>
+      <p><strong>Email your invoice to <a href="mailto:invoice@golabour.com.au">invoice@golabour.com.au</a>.</strong></p>
+      <p><strong>Submit no later than Sunday, 11:59 pm.</strong> Invoices sent after Sunday will be paid in the next payment cycle.</p>
+      <p><strong>Payments are processed every Wednesday</strong> for invoices received by Sunday.</p>
+      <p><strong>Recommended by GoLabour:</strong> use the <a href="https://www.zoho.com/au/invoice/" target="_blank" rel="noopener noreferrer">Zoho Invoice app</a> to create your invoice — a clean template that is easy to use.</p>
+      <ul><li>Include your <strong>name, ABN and bank account</strong>.</li><li>Include <strong>job name, job date and total amount</strong>.</li><li><strong>Breaks are unpaid.</strong></li><li><strong>A timesheet is not an invoice.</strong></li></ul>
+      <p><strong>Returned for correction?</strong> Resubmit the corrected invoice no later than <strong>Tuesday, 11:59 pm</strong> to be paid on <strong>Thursday</strong>.</p>
+      <p><strong>Bill To:</strong><br>GoLabour Solutions<br>ABN: 82 676 721 136<br>invoice@golabour.com.au</p>
+    </details>
     <form id="invoiceForm" novalidate>
       <div class="section-title"><span>01 / YOUR DETAILS</span><span class="section-aside">Saved only on this phone</span></div>
       <section class="surface">
@@ -146,37 +171,23 @@
         <div class="bill-to"><span class="invoice-eyebrow">BILL TO</span><strong>GoLabour Solutions</strong><span>ABN: 82 676 721 136</span><span>invoice@golabour.com.au</span></div>
       </section>
 
-      <div class="section-title"><span>02 / YOUR SHIFTS</span><span class="section-aside">Any day · Multiple shifts</span></div>
-      <section class="surface shifts-surface">
-        <div class="section-heading"><div><h2>Add each shift</h2><p>Different jobs, days and rates can all go on one invoice.</p></div></div>
-        <p class="paid-hours-note"><strong>Breaks are unpaid.</strong> Enter paid hours after deducting breaks. For 8 hours 30 minutes, enter <strong>8.5</strong>.</p>
-        <div id="invoiceShifts" class="invoice-shifts"></div>
-        <button type="button" class="add-worker-button" id="addInvoiceShift"><span aria-hidden="true">+</span> Add another shift</button>
-        <div class="totals-box invoice-total" aria-live="polite"><div><span class="total-eyebrow">INVOICE TOTAL · AUD</span><strong id="invoiceTotal">$0.00</strong><small id="invoiceShiftCount">Add your first shift</small></div><div class="total-symbol" aria-hidden="true">$</div></div>
-        <p class="calc-help">Hours and rates stay in the calculator. The invoice shows each job name, date and amount.</p>
-      </section>
 
-      <section class="ready-panel invoice-actions">
-        <div class="ready-heading"><div><h2>Keep it. Send it.</h2><p>Save the calculation to edit later, or create your invoice now.</p></div></div>
-        <button type="button" id="saveInvoiceCalculation" class="btn btn-primary">Save calculation on this phone</button>
-        <button type="button" id="saveCalculationPhoto" class="btn btn-outline">Save calculator photo</button>
-        <div class="light-divider"></div>
-        <div class="action-grid">
-          <button type="button" id="saveInvoicePhoto" class="btn btn-primary">Save invoice photo</button>
-          <button type="button" id="saveInvoicePDF" class="btn btn-outline">Save invoice PDF</button>
-          <button type="button" id="emailInvoice" class="btn btn-quiet">Email invoice to GoLabour ↗</button>
-        </div>
+      <div class="section-title"><span>02 / JOB AMOUNTS</span><span class="section-aside">No hours or rates</span></div>
+      <section class="surface"><div class="section-heading"><div><h2>Jobs on this invoice</h2><p>Enter amounts directly, or copy them from your calculator.</p></div></div>
+        <button type="button" id="importCalculatorAmounts" class="invoice-secondary">Use calculator amounts</button>
+        <div id="invoiceItems" class="invoice-shifts"></div>
+        <button type="button" id="addInvoiceItem" class="add-worker-button"><span aria-hidden="true">+</span> Add another job</button>
+        <div class="totals-box" aria-live="polite"><div><span class="total-eyebrow">TOTAL TO BE PAID · AUD</span><strong id="invoiceAmountTotal">$0.00</strong><small id="invoiceItemCount">Add your first job</small></div></div>
+      </section>
+      <section class="ready-panel invoice-actions"><div class="ready-heading"><div><h2>Save or send your invoice</h2><p>Check your details and job amounts before exporting.</p></div></div>
+        <div class="action-grid"><button type="button" id="saveInvoicePhoto" class="btn btn-primary">Save invoice photo</button><button type="button" id="saveInvoicePDF" class="btn btn-outline">Save invoice PDF</button><button type="button" id="emailInvoice" class="btn btn-quiet">Email invoice to GoLabour ↗</button></div>
         <div class="feedback" id="invoiceFeedback" role="status" aria-live="polite"></div>
-        <p class="share-tip">Tap Save calculation before closing; changes aren’t saved automatically. Saved calculations stay on this phone. Export a photo or PDF for your own records or accountant. A timesheet is a separate document; send your signed timesheets as required.</p>
-        <button type="button" id="newInvoiceCalculation" class="reset-button">Start a new calculation</button>
+        <p class="share-tip">Attach your signed timesheets as required. The payment instructions above are not printed on your invoice.</p>
       </section>
     </form>
-    <details id="savedInvoiceCalculations" class="previous-reports" hidden><summary>Saved calculations on this phone <span id="savedInvoiceCount"></span></summary><p>Reopen to edit, generate an invoice or correct a returned invoice.</p><div id="savedInvoiceList" class="previous-list"></div></details>
-    <aside class="invoice-deadlines"><strong>GoLabour invoice deadlines</strong><p><b>Sunday, 11:59 pm:</b> submit for Wednesday payment. Later invoices go into the next payment cycle.</p><p><b>Returned for correction?</b> Resubmit by Tuesday, 11:59 pm for Thursday payment.</p><small>Follow GoLabour’s latest instructions if their payment schedule changes.</small></aside>
-    <button type="button" data-page="timesheet" class="invoice-back">← Back to timesheet</button>
-    <footer class="footer"><span>GoLabour Solutions · Invoice Calculator</span><span>Amounts in Australian dollars</span></footer>
+    <button type="button" data-page="calculator" class="invoice-back">← Back to calculator</button>
+    <footer class="footer"><span>GoLabour Solutions · Invoice</span><span>Amounts in Australian dollars</span></footer>
   </main>
-
   <dialog id="invoicePhotoDialog" class="app-dialog invoice-photo-dialog" aria-labelledby="invoicePhotoHeading">
     <div class="dialog-heading"><h2 id="invoicePhotoHeading">Your invoice photo</h2><button type="button" id="closeInvoicePhoto" aria-label="Close photo preview">×</button></div>
     <p id="invoicePhotoInstructions">On iPhone, touch and hold the image and choose Save to Photos, or open the share menu below.</p>
@@ -197,7 +208,7 @@
 <div id="appToast" class="app-toast" role="status" aria-live="polite" hidden></div>
   <dialog id="helpDialog" class="app-dialog" aria-labelledby="helpHeading">
     <div class="dialog-heading"><h2 id="helpHeading">GoLabour on your phone</h2><button type="button" id="closeHelp" aria-label="Close app help">×</button></div>
-    <img class="help-app-icon" src="icons/icon-192.png?v=1.1.0" alt="GoLabour app icon" width="64" height="64">
+    <img class="help-app-icon" src="icons/icon-192.png?v=1.2.0" alt="GoLabour app icon" width="64" height="64">
     <h3>On iPhone</h3>
     <ol><li>Open this link in <strong>Safari</strong>.</li><li>Tap the page menu or <strong>Share</strong> button.</li><li>Choose <strong>Add to Home Screen</strong>.</li><li>Turn on <strong>Open as Web App</strong> if shown, then tap <strong>Add</strong>.</li></ol>
     <h3>On Android</h3>
@@ -205,7 +216,7 @@
     <p id="offlineStatus" role="status">Open the app online once to prepare offline access.</p>
     <p>You can fill in and sign timesheets, calculate shifts and export invoice photos/PDFs offline after the app is ready. Sending through WhatsApp or email needs an internet connection.</p>
     <p>Save the signed timesheet photo or PDF before closing the page. Each fresh visit starts a new timesheet. Invoice calculations can be saved separately on this phone and reopened later.</p>
-    <p class="help-version">Smart Timesheet · Version 1.1.0</p>
+    <p class="help-version">Smart Timesheet · Version 1.2.0</p>
     <button type="button" id="doneHelp" class="btn btn-primary">Got it</button>
   </dialog>
   <noscript><p class="no-script">Please enable JavaScript to use the GoLabour timesheet app.</p></noscript>
