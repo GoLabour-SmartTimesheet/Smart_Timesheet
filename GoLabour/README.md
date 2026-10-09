@@ -1,117 +1,97 @@
-# GoLabour Smart Timesheet — iPhone home-screen app
+# GoLabour Smart Timesheet — single-page app
 
-This is a working, static web app for your existing GitHub Pages timesheet.
-It uses the GoLabour dark green, sand, beige and cream layout, with Home,
-Timesheet and Saved screens and a fixed bottom navigation bar.
+Version 1.0.2 opens directly on the familiar end-of-shift timesheet layout.
+The Add GoLabour to your phone box sits above the worker fields. There are no
+Home, Timesheet or Saved tabs and no bottom navigation bar.
 
-## Upload to your existing GitHub Pages site
+## Publish to GitHub Pages
 
 1. Extract `GoLabour_iPhone_App.zip`.
-2. Open your `Smart_Timesheet` repository on GitHub, then open its `GoLabour` folder.
-3. Choose **Add file → Upload files**.
-4. Upload all the files **inside** this ZIP's `GoLabour` folder, including the
-   `icons` folder. Keep them directly inside the repository's existing `GoLabour`
-   folder so the current URL remains correct.
-5. Commit the upload and wait for the GitHub Pages deployment to finish.
+2. Open the existing `GoLabour` folder in the `Smart_Timesheet` repository.
+3. Upload everything **inside** this ZIP's `GoLabour` folder to that same folder,
+   including `icons`, `favicon.svg`, `favicon.ico`, `index.html`,
+   `manifest.webmanifest`, `pwa.js`, `pwa.css` and `sw.js`.
+4. Replace the existing files, commit the upload and wait for deployment.
+5. Open the app online. If **Update now** appears, use it before filling in a
+   new timesheet. Keep an exported PNG/PDF first if the current form is needed.
 
-Your app link is:
+The website address remains:
 
 https://golabour-smarttimesheet.github.io/Smart_Timesheet/GoLabour/index.html
 
-The app changes appear on that link after the new files are uploaded.
+The ZIP contains one `GoLabour` folder. Do not create a second `GoLabour` folder
+inside the repository's existing one.
 
-## Install on your iPhone
+## Phone installation
 
-1. Open the live link above in **Safari**.
-2. Tap the page menu or **Share** button.
-3. Choose **Add to Home Screen**.
-4. Turn on **Open as Web App** if shown, then tap **Add**.
-5. Open GoLabour from its new Home Screen icon while connected to the internet.
-6. Wait for **Offline ready** before relying on offline access.
+Tap **Add GoLabour to your phone** near the top for instructions.
 
-Use the `?` button inside the app to see these instructions again.
-Installation uses the live HTTPS page. The ZIP supplies the files to publish.
-An Apple Developer subscription and App Store submission are not required for
-this home-screen web app.
+On iPhone, open the live link in Safari, choose **Share → Add to Home Screen**,
+enable **Open as Web App** if shown, then tap **Add**. On Android, use Chrome's
+**Add to Home screen / Install app** menu or the install prompt when available.
 
-## What works
+Open online once. Wait for **Offline ready** in the top status badge before
+relying on offline use. Hours, signatures and image exports work offline after
+the app is prepared. Sending through WhatsApp still needs a connection.
 
-- Home, Timesheet and Saved screens.
-- Up to 15 workers on one report when their site, date and hours are identical.
-- Add another worker stays below the last worker field.
-- Beige input fields and dark green Add Worker / Supervisor / Paid Hours panels.
-- Paid-hour calculations, including overnight shifts and break subtraction.
-- Finger, stylus and mouse signature drawing.
-- Signatures remain when the screen resizes or a stored draft is reopened.
-- Editing report details clears the old signature and requests a new sign-off.
-- Signed PNG image preview and download / native share where supported.
-- Printable report for saving as PDF through the device's print/share interface.
-- Optional draft saving on this device; **off by default** for shared phones.
-- Keep up to 20 signed copies in Saved, open/export them later, or remove them.
-- Offline use after the app shell has been cached during an online visit.
-- Official GoLabour logo app icons, standalone display and safe-area spacing for iPhone screens.
-- Explicit update prompt when a newer app version is ready.
+## Browser and phone icons
 
-## Data and sharing
+The Home Screen icons retain the full official GoLabour logo. Browser tab and
+favourites icons use its distinctive go symbol, cropped from the same supplied
+logo so it is readable at small sizes. Lettering and colours are not redrawn.
 
-The app has no login, server database or cloud synchronisation. Drafts and saved
-copies are stored locally under this app's path. Clearing browser/app data can
-remove them. Save the signed PNG or PDF elsewhere when a report must be kept.
+- `favicon.svg`: self-contained SVG with the original symbol embedded.
+- `favicon.ico`: 16, 32 and 48-pixel browser fallbacks.
+- `icons/favicon-32.png`: 32-pixel PNG browser fallback.
+- `icons/apple-touch-icon.png`: iPhone Home Screen icon.
+- Other `icons/icon-*` files: installable app icons.
 
-“Keep a copy on this phone” stores a signed report locally. It does not submit it
-to GoLabour or post it in a WhatsApp group. The worker selects the destination
-and sends the report through their phone's share interface. Actual WhatsApp
-delivery requires a connection. Continue the existing instruction to send the
-completed timesheet together with the invoice.
+Icon references include a new version query. Browsers may still retain a
+previous favourite's cached icon. Reopen the updated page and, if needed, save
+the favourite again. An existing iPhone Home Screen icon can also retain its
+old image; add the updated page through Safari again to use the new icon.
+Export important reports before removing an installed app or clearing its data.
 
-If local storage is blocked or full, the form and image export continue working,
-and a storage message appears. Old saved reports are not silently removed to
-make room for new ones.
+## Timesheet workflow
 
-## Checks completed
+1. Enter worker names, job site, date, start/finish times and break minutes.
+2. Add notes if needed and obtain the supervisor's name and signature.
+3. Save the signed photo, share it using the phone's share menu, or print/save
+   the report as PDF. Include the invoice when sending to GoLabour.
 
-The app was checked in Chromium with a 390 × 844 mobile viewport, plus 320-pixel
-width and landscape layouts. Checks covered navigation, installation help,
-draft opt-in/out, multiple workers, hours, sign-off, PNG generation, the share
-file payload, printable/PDF layout, saved copies, draft/signature recovery,
-offline restart and image export, storage failures, fresh sign-off after edits,
-record removal/cancellation, reset and the 15-worker limit.
+Up to 15 workers can share one report if their site, date and hours match.
+Add another worker stays below the last name. Beige fields and the dark
+supervisor/Add Worker/Paid Hours colours are retained. Editing report details
+after signing clears the old signature and requests a fresh sign-off.
 
-The native Safari installation and iPhone/WhatsApp share menus still need an
-on-device check. Chromium emulation does not reproduce those native menus.
+## Local data
 
-## Updating the app later
+New visits start a fresh form. There is no new automatic draft saving and no
+new device-copy saving button. Save the signed photo/PDF before closing the
+page if the report must be kept. There is no account, cloud database, automatic
+submission or cross-device sharing.
 
-When changing the published files, increase the version in `sw.js` (for example,
-`v1.0.1` to `v1.0.2`). This creates a complete new offline cache. The app offers an
-Update button and preserves an enabled draft before reloading. Saved records
-and drafts use separate storage keys from the cached app files.
+Existing copies and drafts from the earlier version are left untouched. Only
+phones that already have readable copies show a collapsed **Previous copies
+on this phone** section below the form. Open a copy there to export or share
+it. Opening or editing it does not replace its stored original. The section is
+hidden for new visitors, and there is no separate Saved screen.
 
-### Logo icon update — version 1.0.1
+## Validation
 
-The app icons use the full official logo from the supplied `logo.png`, without
-redrawing or changing its lettering or colours. Only its transparent outer
-padding is cropped. A dark green background keeps the pale logo readable.
-The maskable icon keeps the logo inside the central safe area.
+The release is checked in mobile Chromium emulation for the single-page
+layout, top install box, install help, hours, additional workers, supervisor
+signature, signed PNG export, native-share file payload, printable report,
+offline restart, icon loading, and upgrade recovery of earlier local copies.
+Native iPhone installation, browser favourite caching and WhatsApp's own share
+menus still need a check on the actual phone/browser.
 
-Upload the complete updated `GoLabour` folder contents to the existing folder,
-including `icons`, `index.html`, `manifest.webmanifest` and `sw.js`. Open the app
-online and tap **Update now** when offered. An existing iPhone Home Screen icon
-may retain its old image; open the updated link in Safari and use **Add to Home
-Screen** again to pick up the new logo. Before removing an existing installed
-app or clearing its data, export any saved reports you need to keep.
+## Future updates
 
-## Main files
+Increase the cache version in `sw.js` when publishing changes. Current cache
+version is `v1.0.2`. This installs a complete new offline shell and offers an
+update. Only this app path's older caches are removed; existing report data is
+kept separately and this release never writes or deletes that data.
 
-| File | Purpose |
-| --- | --- |
-| `index.html` | Home, timesheet form, saved screen and install help |
-| `app.js` | Timesheet calculations, signatures, validation and exports |
-| `pwa.js` | App navigation, optional drafts, saved copies and update handling |
-| `style.css` / `pwa.css` | Original branding and mobile app layout |
-| `manifest.webmanifest` | App identity and Home Screen settings |
-| `sw.js` | Versioned offline app cache |
-| `logo.png` / `icons/` | Local branding and app icons |
-
-The older header decoration source files are retained with the supplied layout;
-the new app does not require them for its workflow.
+Invoice calculation and shift features can be added later without changing the
+current timesheet link.

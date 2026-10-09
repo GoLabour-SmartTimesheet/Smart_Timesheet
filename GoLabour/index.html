@@ -9,9 +9,11 @@
   <meta name="apple-mobile-web-app-title" content="GoLabour">
   <meta name="description" content="GoLabour Solutions mobile end-of-shift timesheet. Calculate hours, get supervisor sign-off, and share with WhatsApp.">
   <title>GoLabour | Smart Timesheet</title>
-  <link rel="manifest" href="manifest.webmanifest?v=1.0.1">
-  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png?v=1.0.1">
-  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=1.0.1">
+  <link rel="manifest" href="manifest.webmanifest?v=1.0.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png?v=1.0.2">
+  <link rel="icon" href="favicon.ico?v=1.0.2" sizes="16x16 32x32 48x48" type="image/x-icon">
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png?v=1.0.2">
+  <link rel="icon" type="image/svg+xml" sizes="any" href="favicon.svg?v=1.0.2">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="pwa.css">
   <script src="app.js" defer></script>
@@ -29,23 +31,22 @@
   </header>
 
   <div id="appUpdate" class="app-update" hidden><span>A new app version is ready.</span><button type="button" id="applyUpdate">Update now</button></div>
-  <main class="app-layout">
-  <section id="screen-home" class="app-screen home-screen" aria-labelledby="homeHeading">
-    <div class="home-hero"><p class="home-eyebrow" id="todayLabel">CREW OPERATIONS</p><h1 id="homeHeading">Smart<br><em>Timesheet.</em></h1><p>Finish your shift. Get it signed.<br>Keep your report ready to share.</p><span class="home-hero-mark" aria-hidden="true">↗</span></div>
-    <div class="home-content">
-      <section class="home-primary"><div><span class="small-eyebrow">YOUR NEXT REPORT</span><h2>Ready when you are.</h2><p>One signed timesheet for your shift, including workers with the same hours.</p></div><button type="button" class="btn btn-primary home-start" id="homeStart">Start a timesheet <span aria-hidden="true">↗</span></button><button type="button" class="btn btn-outline" id="homeContinue" hidden>Continue current timesheet</button><p id="draftSummary" class="draft-summary">Your form starts fresh on this phone.</p></section>
-      <div class="home-stats"><button type="button" id="homeSaved"><strong id="savedCount">0</strong><span>Saved timesheets</span><i aria-hidden="true">↗</i></button><div><span class="offline-dot" aria-hidden="true"></span><strong id="offlineTitle">Getting ready</strong><span id="offlineDescription">Preparing offline access</span></div></div>
-      <section class="storage-card"><div><h2>Remember my draft</h2><p>Save changes on this phone as you work. Keep this off on a shared device.</p></div><label class="draft-switch"><input type="checkbox" id="rememberDraft" aria-label="Remember my draft on this phone"><span aria-hidden="true"></span></label><p id="storageNotice" class="storage-notice" role="status"></p></section>
-      <button type="button" id="installGuide" class="install-card"><img src="icons/icon-192.png?v=1.0.1" alt="" width="44" height="44"><span><strong>Add GoLabour to your iPhone</strong><small>Open it straight from your Home Screen.</small></span><b aria-hidden="true">+</b></button>
-      <div class="home-flow"><span>Fill in</span><i aria-hidden="true">→</i><span>Supervisor signs</span><i aria-hidden="true">→</i><span>Share</span></div>
-      <footer class="footer"><span>GoLabour Solutions · Smart Timesheet</span><a href="https://golabour.com.au/" target="_blank" rel="noopener noreferrer">Company website ↗</a></footer>
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="mini-label">GO LABOUR SOLUTIONS <span>/</span> DAILY REPORT</div>
+      <h1>Shift completed.<br><em>Timesheet sorted.</em></h1>
+      <p>Fill in your hours at the end of your shift, get your supervisor to sign, then send it to your work WhatsApp group.</p>
+      <div class="steps"><span><b>01</b> Fill in</span><i aria-hidden="true"></i><span><b>02</b> Sign off</span><i aria-hidden="true"></i><span><b>03</b> Share</span></div>
     </div>
-  </section>
-
-  <section id="screen-timesheet" class="main-content app-screen" aria-labelledby="timesheetHeading" hidden>
-    <div class="app-page-heading"><p class="small-eyebrow">END-OF-SHIFT REPORT</p><h1 id="timesheetHeading" tabindex="-1">Your timesheet.</h1><p id="draftStatus" role="status">Draft storage is off.</p></div>
-    <div class="section-title"><span>WORKER DETAILS</span><span class="section-aside">Complete once per shift</span></div>
-
+    <div class="hero-line"></div>
+  </div>
+  <main class="main-content app-layout">
+    <button type="button" id="installGuide" class="install-card">
+      <img src="icons/icon-192.png?v=1.0.2" alt="" width="48" height="48">
+      <span><strong>Add GoLabour to your phone</strong><small>Open it straight from your Home Screen.</small></span>
+      <b aria-hidden="true">+</b>
+    </button>
+    <div class="section-title"><span>01 / WORKER DETAILS</span><span class="section-aside">End of shift · Complete once</span></div>
     <form id="timesheetForm" novalidate autocomplete="off">
       <section class="surface worker-section" aria-labelledby="workerHeading">
         <div class="section-heading">
@@ -100,21 +101,33 @@
           <button type="button" class="btn btn-primary" id="shareButton"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="5" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8 11 7-5M8 13l7 5"/></svg> Share to WhatsApp <span aria-hidden="true">↗</span></button>
           <button type="button" class="btn btn-outline" id="downloadButton"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M4 16v4h16v-4"/></svg> Save signed photo</button>
           <button type="button" class="btn btn-quiet" id="printButton">Print / Save as PDF</button>
-          <button type="button" class="btn btn-quiet save-device" id="saveRecord">Keep a copy on this phone</button>
         </div>
         <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
         <p class="share-tip"><strong>WhatsApp tip:</strong> On supported phones, tap Share and choose WhatsApp, then select your work group. If sharing is unavailable, download the image and attach it to the group manually. The website cannot automatically post into a private group. Important: Send your completed, signed timesheet together with your invoice.</p>
         <button type="button" class="reset-button" id="resetButton">Start a new timesheet</button>
       </section>
     </form>
-
+    <details id="previousReports" class="previous-reports" hidden>
+      <summary>Previous copies on this phone <span id="previousCount"></span></summary>
+      <p>Open an existing copy to download or share it.</p>
+      <div id="previousList" class="previous-list"></div>
+    </details>
     <footer class="footer"><span>GoLabour Solutions · Smart Timesheet</span><a href="https://golabour.com.au/" target="_blank" rel="noopener noreferrer">golabour.com.au ↗</a></footer>
-  </section>
-  <section id="screen-saved" class="app-screen saved-screen" aria-labelledby="savedHeading" hidden><div class="app-page-heading"><p class="small-eyebrow">YOUR REPORTS</p><h1 id="savedHeading" tabindex="-1">Saved timesheets.</h1><p>Copies saved on this phone. Open one to review, download or share it.</p></div><div id="savedEmpty" class="saved-empty"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M13 7h16l7 7v27H13zM29 7v9h7M19 25h11M19 31h11"/></svg><h2>Nothing saved yet.</h2><p>After the supervisor signs, tap “Keep a copy on this phone”.</p><button type="button" class="btn btn-primary" id="savedStart">Start a timesheet</button></div><div id="savedList" class="saved-list"></div><p class="saved-local-note">These copies are kept on this device. Save the signed PNG or PDF as a separate copy if you need to keep it elsewhere.</p><button type="button" id="clearRecords" class="clear-records" hidden>Clear saved timesheets</button></section>
   </main>
-  <nav class="app-nav" aria-label="App screens"><button type="button" data-screen="home" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7M5 9v12h14V9M9 21v-7h6v7"/></svg><span>Home</span></button><button type="button" data-screen="timesheet"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v17H5V4h2M9 3h6v4H9zM9 12h6M9 16h6"/></svg><span>Timesheet</span></button><button type="button" data-screen="saved"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v17H4zM8 4v6h8V4M8 21v-6h8v6"/></svg><span>Saved</span><b id="savedBadge" hidden>0</b></button></nav>
-  <div id="appToast" class="app-toast" role="status" aria-live="polite" hidden></div>
-  <dialog id="helpDialog" class="app-dialog" aria-labelledby="helpHeading"><div class="dialog-heading"><h2 id="helpHeading">GoLabour on your iPhone</h2><button type="button" id="closeHelp" aria-label="Close app help">×</button></div><img class="help-app-icon" src="icons/icon-192.png?v=1.0.1" alt="GoLabour app icon" width="64" height="64"><ol><li>Open the timesheet link in <strong>Safari</strong>.</li><li>Tap the page menu or <strong>Share</strong> button.</li><li>Choose <strong>Add to Home Screen</strong>.</li><li>Turn on <strong>Open as Web App</strong> if shown, then tap <strong>Add</strong>.</li></ol><p>Open the app online once and wait for “Offline ready”. You can then fill in and sign a timesheet without a connection.</p><p>Sharing through WhatsApp needs an internet connection. Saved reports and optional drafts stay on this device.</p><p class="help-version">Smart Timesheet · Version 1.0.1</p><button type="button" id="doneHelp" class="btn btn-primary">Got it</button></dialog>
+<div id="appToast" class="app-toast" role="status" aria-live="polite" hidden></div>
+  <dialog id="helpDialog" class="app-dialog" aria-labelledby="helpHeading">
+    <div class="dialog-heading"><h2 id="helpHeading">GoLabour on your phone</h2><button type="button" id="closeHelp" aria-label="Close app help">×</button></div>
+    <img class="help-app-icon" src="icons/icon-192.png?v=1.0.2" alt="GoLabour app icon" width="64" height="64">
+    <h3>On iPhone</h3>
+    <ol><li>Open this link in <strong>Safari</strong>.</li><li>Tap the page menu or <strong>Share</strong> button.</li><li>Choose <strong>Add to Home Screen</strong>.</li><li>Turn on <strong>Open as Web App</strong> if shown, then tap <strong>Add</strong>.</li></ol>
+    <h3>On Android</h3>
+    <p>Open the link in Chrome. Choose <strong>Add to Home screen</strong> or <strong>Install app</strong> from the browser menu.</p>
+    <p id="offlineStatus" role="status">Open the app online once to prepare offline access.</p>
+    <p>You can fill in and sign offline after the app is ready. Sharing through WhatsApp needs an internet connection.</p>
+    <p>Save the signed photo or PDF before closing the page. Each fresh visit starts a new timesheet.</p>
+    <p class="help-version">Smart Timesheet · Version 1.0.2</p>
+    <button type="button" id="doneHelp" class="btn btn-primary">Got it</button>
+  </dialog>
   <noscript><p class="no-script">Please enable JavaScript to use the GoLabour timesheet app.</p></noscript>
 
   <section id="printSheet" class="print-sheet" aria-label="Printable signed timesheet">

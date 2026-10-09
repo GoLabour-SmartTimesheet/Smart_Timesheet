@@ -1,9 +1,9 @@
 'use strict';
 const BASE = new URL('./', self.location.href);
 const PREFIX = 'golabour-timesheet:' + BASE.pathname + ':';
-const CACHE = PREFIX + 'v1.0.1';
+const CACHE = PREFIX + 'v1.0.2';
 const SHELL = new URL('index.html', BASE).href;
-const FILES = ['index.html','style.css','app.js','pwa.css','pwa.js','manifest.webmanifest','logo.png','icons/apple-touch-icon.png','icons/icon-192.png','icons/icon-512.png','icons/icon-maskable-512.png'];
+const FILES = ['index.html','style.css','app.js','pwa.css','pwa.js','manifest.webmanifest','logo.png','favicon.svg','favicon.ico','icons/favicon-32.png','icons/apple-touch-icon.png','icons/icon-192.png','icons/icon-512.png','icons/icon-maskable-512.png'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(FILES.map(file => new Request(new URL(file,BASE).href,{cache:'reload'})))));
 });

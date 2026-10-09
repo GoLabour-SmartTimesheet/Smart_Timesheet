@@ -509,7 +509,7 @@
     $('charCount').textContent = `${$('message').value.length} / 650`;
     drawSignature(); clearFeedback();
   }
-  // Fresh visits remain blank unless draft recovery is enabled in the app.
+  // Every fresh visit starts blank; previous copies can be opened explicitly.
   resetForm({notify:false});
   window.GoLabourTimesheet = { captureState, restoreState, resetForm, validate:getValidatedReport, refreshSignature:drawSignature, feedback, calculate:calc };
 })();
