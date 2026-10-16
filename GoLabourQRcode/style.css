@@ -140,3 +140,14 @@
 
 /* Supervisor approval matches the total paid hours panel */
 .supervisor-section{background:#252923;border-color:#252923;color:#fffefa}.supervisor-section .section-heading h2{color:#fffefa}.supervisor-section .section-heading p,.supervisor-section .signature-disclaimer{color:#c7ccbf}.supervisor-section .field label,.supervisor-section .signature-label label{color:#ccbda3}.supervisor-section .clear-signature{color:#e0cfb2}.supervisor-section .icon-gold{background:#c9b59a;color:#252923}.supervisor-section .pad-wrap{background:#f3ece1;border-color:#ccbda3}
+
+/* Keep the main page label centred, as requested. */
+.hero .mini-label{text-align:center;margin-bottom:19px;}
+
+/* Header matches the GoLabour App: left logo, right page title. */
+.mast-inner{flex-direction:row;justify-content:space-between;align-items:center;text-align:left;}
+.brand{width:auto;flex:0 1 auto;min-width:0;}
+.brand img{width:203px;max-height:65px;}
+.brand-tag{display:block;flex:0 0 auto;text-align:right;white-space:nowrap;}
+@media(max-width:600px){.mast-inner{padding:10px 17px;gap:10px;}.brand img{width:167px;max-width:100%;}.brand-tag{display:block;font-size:9px;letter-spacing:.08em;}}
+@media(max-width:365px){.brand img{width:140px;}.brand-tag{display:block;font-size:8.5px;letter-spacing:.04em;}}
